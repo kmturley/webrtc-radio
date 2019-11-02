@@ -1,0 +1,4 @@
+# ignore libraries and secrets
+keys
+node_modules
+src/js/socket.io.js

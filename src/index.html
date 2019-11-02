@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Web RTC Audio Broadcast</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>Web RTC Audio Broadcast</h1>
+  <input type="text" id="connectRoom" value="test">
+  <div id="streamFrom">
+    <div><b>Stream from: </b></div>
+    <div class="inputOptions">
+      <select id="streamFromOptions">
+        <option value="none">None</option>
+        <option value="file">File</option>
+        <option value="mic" selected>Microphone</option>
+        <option id="fromDesktop" value="desktop">Desktop Capture (Windows only)</option>
+      </select>
+    </div>
+  </div>
+  <button id="connectButton">Connect</button>
+  <p id="socketId">disconnected</p>
+  <div id="localMedia">
+    <video id="localVideo" class="localVideo" autoplay controls muted></video>
+  </div>
+  <select id="vizualizerOptions">
+    <option value="line">Line</option>
+    <option value="bar">Bar</option>
+  </select><br><br>
+  <canvas id="visualizer" width="512" height="300"></canvas>
+  <p id="remoteMedia"></p>
+  <script src="js/socket.io.js"></script>
+  <script src="js/lib.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

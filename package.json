@@ -1,0 +1,26 @@
+{
+  "name": "webrtc-audio-broadcast",
+  "version": "0.0.1",
+  "description": "WebRTC audio broadcast running across local network",
+  "main": "server.js",
+  "scripts": {
+    "postinstall": "cp ./node_modules/socket.io-client/dist/socket.io.js ./src/js/socket.io.js",
+    "generate": "mkdir ./keys && openssl genrsa -out ./keys/client-key.pem 2048 && openssl req -new -key ./keys/client-key.pem -out ./keys/client.csr && openssl x509 -req -in ./keys/client.csr -signkey ./keys/client-key.pem -out ./keys/client-cert.pem",
+    "start": "node ./server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "webrtc",
+    "audio",
+    "broadcast",
+    "node",
+    "https"
+  ],
+  "author": "kmturley",
+  "license": "ISC",
+  "dependencies": {
+    "https": "^1.0.0",
+    "socket.io": "^2.3.0",
+    "webrtc-adapter": "^7.3.0"
+  }
+}
