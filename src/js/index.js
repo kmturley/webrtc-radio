@@ -1,4 +1,4 @@
-let socket = new Socket('192.168.86.205', 8080);
+let socket = new Socket(window.location.hostname, window.location.port);
 
 document.getElementById('connectButton').addEventListener('click', async () => {
   socket.leaveAllRooms();
