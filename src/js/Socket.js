@@ -57,7 +57,7 @@ class Socket {
       trace(`createOffer to ${socketId} started.`);
       let offer = await peer.conn.createOffer(offerOptions);
       await peer.conn.setLocalDescription(offer);
-
+      this.updateBandwidth(peer.conn, 'unlimited');
       console.log(peer);
       this.socket.emit('offer', offer, peer.id);
     });
@@ -82,7 +82,7 @@ class Socket {
       await peer.conn.setRemoteDescription(offer);
       let answer = await peer.conn.createAnswer(offerOptions);
       await peer.conn.setLocalDescription(answer);
-
+      this.updateBandwidth(peer.conn, 'unlimited');
       this.socket.emit('answer', answer, socketId);
 
       // Restore any cached ICE candidates
@@ -162,5 +162,76 @@ class Socket {
   disconnected(id) {
     this.peers[id] = null;
     trace(`Removed ${id} from peer list.`);
+  }
+
+  // Taken from example at:
+  // https://github.com/webrtc/samples/blob/gh-pages/src/content/peerconnection/bandwidth/js/main.js
+  // and added networkPriority, priority
+  updateBandwidth(pc1, bandwidth) {
+    // In Chrome, use RTCRtpSender.setParameters to change bandwidth without
+    // (local) renegotiation. Note that this will be within the envelope of
+    // the initial maximum bandwidth negotiated via SDP.
+    if ((adapter.browserDetails.browser === 'chrome' ||
+      (adapter.browserDetails.browser === 'firefox' &&
+        adapter.browserDetails.version >= 64)) &&
+      'RTCRtpSender' in window &&
+      'setParameters' in window.RTCRtpSender.prototype) {
+      const sender = pc1.getSenders()[0];
+      const parameters = sender.getParameters();
+      if (!parameters.encodings) {
+        parameters.encodings = [{}];
+      }
+      if (bandwidth === 'unlimited') {
+        delete parameters.encodings[0].maxBitrate;
+        parameters.encodings[0].networkPriority = 'high';
+        parameters.encodings[0].priority = 'high';
+      } else {
+        parameters.encodings[0].maxBitrate = bandwidth * 1000;
+      }
+      sender.setParameters(parameters)
+        .then(() => {
+          console.log('parameters', parameters);
+        })
+        .catch(e => console.error(e));
+      return;
+    }
+    // Fallback to the SDP munging with local renegotiation way of limiting
+    // the bandwidth.
+    pc1.createOffer()
+      .then(offer => pc1.setLocalDescription(offer))
+      .then(() => {
+        const desc = {
+          type: pc1.remoteDescription.type,
+          sdp: bandwidth === 'unlimited'
+            ? removeBandwidthRestriction(pc1.remoteDescription.sdp)
+            : updateBandwidthRestriction(pc1.remoteDescription.sdp, bandwidth)
+        };
+        console.log('Applying bandwidth restriction to setRemoteDescription:\n' +
+          desc.sdp);
+        return pc1.setRemoteDescription(desc);
+      })
+      .then(() => {
+        bandwidthSelector.disabled = false;
+      })
+      .catch(onSetSessionDescriptionError);
+  }
+
+  updateBandwidthRestriction(sdp, bandwidth) {
+    let modifier = 'AS';
+    if (adapter.browserDetails.browser === 'firefox') {
+      bandwidth = (bandwidth >>> 0) * 1000;
+      modifier = 'TIAS';
+    }
+    if (sdp.indexOf('b=' + modifier + ':') === -1) {
+      // insert b= after c= line.
+      sdp = sdp.replace(/c=IN (.*)\r\n/, 'c=IN $1\r\nb=' + modifier + ':' + bandwidth + '\r\n');
+    } else {
+      sdp = sdp.replace(new RegExp('b=' + modifier + ':.*\r\n'), 'b=' + modifier + ':' + bandwidth + '\r\n');
+    }
+    return sdp;
+  }
+  
+  removeBandwidthRestriction(sdp) {
+    return sdp.replace(/b=AS:.*\r\n/, '').replace(/b=TIAS:.*\r\n/, '');
   }
 }
