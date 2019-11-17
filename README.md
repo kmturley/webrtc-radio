@@ -31,11 +31,17 @@ Access the web frontend at:
 
 ## Understanding SDP output
 
-Create a file called sdp.txt containing the sdp data:
+Create a file containing the SDP data called:
+
+    sdp.txt
 
 To then convert into a human readable structured output run:
 
     npm run parser
+
+Then open the generated file:
+
+    sdp.json
 
 
 ## Directory structure
