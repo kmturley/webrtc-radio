@@ -38,7 +38,8 @@ class Socket {
 
       const offerOptions = {
         offerToReceiveAudio: 1,
-        offerToReceiveVideo: 0
+        offerToReceiveVideo: 0,
+        voiceActivityDetection: false
       };
       let peer = this.peers[socketId];
 
