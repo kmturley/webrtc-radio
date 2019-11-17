@@ -5,6 +5,12 @@
   <title>Web RTC Audio Broadcast</title>
   <meta name="description" content="" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    .connect {
+      font-size: 2rem;
+      padding: 1rem;
+    }
+  </style>
 </head>
 <body>
   <h1>Web RTC Audio Broadcast</h1>
@@ -20,7 +26,7 @@
       </select>
     </div>
   </div>
-  <button id="connectButton">Connect</button>
+  <button id="connectButton" class="connect">Connect</button>
   <p id="socketId">disconnected</p>
   <div id="localMedia">
     <video id="localVideo" class="localVideo" autoplay controls muted></video>
@@ -31,6 +37,7 @@
   </select><br><br>
   <canvas id="visualizer" width="512" height="300"></canvas>
   <p id="remoteMedia"></p>
+  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
   <script src="js/socket.io.js"></script>
   <script src="js/Peer.js"></script>
   <script src="js/Room.js"></script>

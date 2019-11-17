@@ -29,6 +29,15 @@ Access the web frontend at:
     http://localhost:8080/
 
 
+## Understanding SDP output
+
+Create a file called sdp.txt containing the sdp data:
+
+To then convert into a human readable structured output run:
+
+    npm run parser
+
+
 ## Directory structure
 
     /src                           --> Web source files

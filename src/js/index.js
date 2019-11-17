@@ -117,7 +117,21 @@ function trace(text) {
 
 async function setupLocalMediaStreams() {
   return new Promise((resolve, reject) => {
-    navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    const constraints = {
+      audio: {
+        autoGainControl: false,
+        channelCount: 2,
+        echoCancellation: false,
+        latency: 0,
+        noiseSuppression: false,
+        sampleRate: 48000,
+        sampleSize: 16,
+        volume: 1.0
+      }
+    };
+    console.log('getSupportedConstraints', navigator.mediaDevices.getSupportedConstraints());
+    navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+      console.log('getConstraints', stream.getTracks()[0].getConstraints());
       if (localStreamNode) {
         localStreamNode.disconnect();
       }
