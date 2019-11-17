@@ -40,6 +40,8 @@ window.setInterval(() => {
           const bitrate = 8 * (bytes - lastResult.get(report.id).bytesSent) /
             (now - lastResult.get(report.id).timestamp);
 
+          console.log('bitrate', bitrate);
+
           // append to chart
           bitrateSeries.addPoint(now, bitrate);
           bitrateGraph.setDataSeries([bitrateSeries]);

@@ -1,4 +1,5 @@
 # ignore libraries and secrets
+.DS_Store
 keys
 node_modules
 src/js/socket.io.js
