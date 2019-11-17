@@ -31,14 +31,29 @@
   <div id="localMedia">
     <video id="localVideo" class="localVideo" autoplay controls muted></video>
   </div>
-  <select id="vizualizerOptions">
-    <option value="line">Line</option>
-    <option value="bar">Bar</option>
-  </select><br><br>
-  <canvas id="visualizer" width="512" height="300"></canvas>
-  <p id="remoteMedia"></p>
+  <div class="graph-container" id="bitrateGraph">
+    <h2>Bitrate</h2>
+    <canvas id="bitrateCanvas"></canvas>
+  </div>
+  <div class="graph-container" id="packetGraph">
+    <h2>Packets sent per second</h2>
+    <canvas id="packetCanvas"></canvas>
+  </div>
+  <div class="graph-container" id="frequencyGraph">
+    <h2>Audio frequency graph</h2>
+    <canvas id="visualizer" width="512" height="300"></canvas>
+    <p>
+      <select id="vizualizerOptions">
+        <option value="line">Line</option>
+        <option value="bar">Bar</option>
+      </select>
+    </p>
+    <p id="remoteMedia"></p>
+  </div>
   <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+  <script src="https://webrtc.github.io/samples/src/js/third_party/graph.js"></script>
   <script src="js/socket.io.js"></script>
+  <script src="js/stats.js"></script>
   <script src="js/Peer.js"></script>
   <script src="js/Room.js"></script>
   <script src="js/Socket.js"></script>

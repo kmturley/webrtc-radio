@@ -53,6 +53,7 @@ class Socket {
       peer = await createPeer(socketId, this);
       this.peers[peer.id] = peer;
       peer.offered = true;
+      pc1 = peer.conn;
 
       trace(`createOffer to ${socketId} started.`);
       let offer = await peer.conn.createOffer(offerOptions);
