@@ -44,6 +44,12 @@ Then open the generated file:
     sdp.json
 
 
+## Limitations
+
+1) Maximum bitrate is 520kb/s stereo, which is 260kps per channel.
+2) Actual bitrate depends on the speed of your network and strength of your signal.
+
+
 ## Directory structure
 
     /src                           --> Web source files
