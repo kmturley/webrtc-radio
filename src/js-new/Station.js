@@ -1,4 +1,5 @@
 class Station {
+  id = 'none';
   options = {
     constraints: {
       audio: {
@@ -18,7 +19,8 @@ class Station {
       voiceActivityDetection: false
     }
   }
-  constructor(options) {
+  constructor(id, options) {
+    this.id = id ? id : this.id;
     this.options = {...this.options, ...options};
     console.log('Station', this);
   }

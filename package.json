@@ -7,7 +7,7 @@
     "postinstall": "cp ./node_modules/socket.io-client/dist/socket.io.js ./src/js/socket.io.js",
     "generate": "mkdir ./keys && openssl genrsa -out ./keys/client-key.pem 2048 && openssl req -new -key ./keys/client-key.pem -out ./keys/client.csr && openssl x509 -req -in ./keys/client.csr -signkey ./keys/client-key.pem -out ./keys/client-cert.pem",
     "parser": "node parser.js",
-    "start": "nodemon ./server.js",
+    "start": "nodemon ./server-new.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [

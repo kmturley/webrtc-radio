@@ -9,14 +9,24 @@
 </head>
 <body>
   <div class="radio" id="elRadio">
-    <input id="elName" type="text" value="My Station" />
-    <button id="elCreate">Create station</button>
+    <input id="elStationId" type="text" value="my-station" />
+    <button id="elStationCreate">Create station</button>
+    <button id="elStationRemove">Remove station</button>
   </div>
   <div class="station hide" id="elStation">
     <button id="elStart">Start station</button>
     <button id="elStop" disabled="disabled">Stop station</button>
   </div>
+  <div class="stations">
+    <h2>Stations</h2>
+    <ul id="elStations"></ul>
+  </div>
+  <!-- <div class="listener" id="elListener">
+    <input id="elListenName" type="text" value="My Station" />
+    <button id="elListen">Listen to station</button>
+  </div> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+  <script src="js-new/Listener.js"></script>
   <script src="js-new/Radio.js"></script>
   <script src="js-new/Station.js"></script>
   <script src="js-new/index.js"></script>
