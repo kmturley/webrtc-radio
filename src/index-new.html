@@ -8,14 +8,16 @@
   <link href="./css/index.css" rel="stylesheet" />
 </head>
 <body>
-  <div class="radio" id="elRadio">
+  <div class="station" id="elStation">
+    <h2>Station</h2>
     <input id="elStationId" type="text" value="my-station" />
     <button id="elStationCreate">Create station</button>
-    <button id="elStationRemove">Remove station</button>
   </div>
-  <div class="station hide" id="elStation">
-    <button id="elStart">Start station</button>
-    <button id="elStop" disabled="disabled">Stop station</button>
+  <div class="broadcast hide" id="elBroadcast">
+    <h2>Broadcast</h2>
+    <button id="elBroadcastStart">Start broadcast</button>
+    <button id="elBroadcastStop" disabled="disabled">Stop broadcast</button>
+    <button id="elStationRemove">Remove station</button>
   </div>
   <div class="stations">
     <h2>Stations</h2>

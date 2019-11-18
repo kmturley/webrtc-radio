@@ -4,9 +4,13 @@ class Listener {
   constructor(options) {
     this.options = {...this.options, ...options};
     console.log('Listener', this);
-  }
-  connect() {
     this.connection = new RTCPeerConnection();
+  }
+
+  async connect(originalOffer) {
+    await this.connection.setRemoteDescription(originalOffer);
+    const newOffer = await this.connection.createAnswer(originalOffer);
+    return this.connection.setLocalDescription(newOffer);
   }
 
   createId() {

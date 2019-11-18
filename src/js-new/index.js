@@ -1,32 +1,33 @@
 (function () {
   let listener = new Listener();
   let radio = new Radio({
-    onStations: onStations
+    onUpdate: onRadioUpdate
   });
   let myStation;
 
   elStationCreate.addEventListener('click', () => {
+    toggleClass('hide', [elStation, elBroadcast]);
     myStation = new Station(elStationId.value);
     radio.add(myStation);
-    toggleClass('hide', [elRadio, elStation]);
   });
 
   elStationRemove.addEventListener('click', () => {
-    radio.remove(elStationId.value);
+    toggleClass('hide', [elStation, elBroadcast]);
+    radio.remove(myStation.id);
   });
   
-  elStart.addEventListener('click', async () => {
-    toggleAttribute('disabled', [elStart, elStop]);
-    const offer = await station.start();
+  elBroadcastStart.addEventListener('click', async () => {
+    toggleAttribute('disabled', [elBroadcastStart, elBroadcastStop]);
+    const offer = await myStation.start();
     console.log('offer.sdp', offer.sdp);
   });
 
-  elStop.addEventListener('click', () => {
-    toggleAttribute('disabled', [elStart, elStop]);
-    station.stop();
+  elBroadcastStop.addEventListener('click', () => {
+    toggleAttribute('disabled', [elBroadcastStart, elBroadcastStop]);
+    myStation.stop();
   });
 
-  function onStations(stations) {
+  function onRadioUpdate(stations) {
     addChildren(elStations, stations, 'li', (station) => {
       radio.join(station);
     });
@@ -38,7 +39,7 @@
     const fragment = document.createDocumentFragment();
     items.forEach((item) => {
       const el = document.createElement(type);
-      el.textContent = item.id;
+      el.textContent = `${item.id} (${item.listeners})`;
       el.addEventListener('click', () => {
         click(item);
       });

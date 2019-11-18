@@ -36,36 +36,55 @@ function handleRequest(req, res) {
   });
 }
 
-function handleSockets(socket) {
-  console.log('handleSockets', socket.id);
+function getStation(stationId) {
+  return stations.filter(function(station) {
+    return station.id === stationId;
+  })[0];
+}
 
-  socket.on('stations.add', (station) => {
-    console.log('socket.stations.add', station);
-    stations.push(station);
-    // const nsp = io.of('/' + station.id);
-    // nsp.on('connection', () => {
-    //   console.log('someone connected to', station.id);
-    // });
-    io.emit('stations', stations);
+function stationConnection(socket) {
+  const station = getStation(socket.nsp.name.slice(1));
+  console.log('station.connect', socket.nsp.name, socket.conn.id);
+
+  socket.on('station.start', (station) => {
+    console.log('station.start', station);
   });
 
-  socket.on('stations.remove', (stationId) => {
-    console.log('socket.stations.remove', stationId);
+  socket.on('station.stop', (station) => {
+    console.log('station.stop', station);
+  });
+
+  // send back station details
+  // socket.emit('station.update', station);
+
+  // update station details for all listeners
+  station.listeners += 1;
+  io.emit('radio.update', stations);
+}
+
+function radioConnection(socket) {
+  console.log('radio.connect', socket.id);
+
+  socket.on('radio.add', (station) => {
+    console.log('radio.add', station);
+    stations.push(station);
+    const newStation = io.of('/' + station.id);
+    newStation.on('connection', stationConnection);
+    // send back new station info
+    socket.emit('station.update', station);
+    // update station details for all listeners
+    io.emit('radio.update', stations);
+  });
+
+  socket.on('radio.remove', (stationId) => {
+    console.log('radio.remove', stationId);
     stations = stations.filter(function(station) {
       return station.id !== stationId;
     });
-    io.emit('stations', stations);
+    io.emit('radio.update', stations);
   });
 
-  socket.on('join', (station) => {
-    console.log('socket.join', station);
-    // listeners.push(listener);
-    // io.emit('join', io.sockets.adapter.rooms);
-  });
-
-
-
-  socket.emit('stations', stations);
+  socket.emit('radio.update', stations);
 }
 
 // setup http server
@@ -75,4 +94,4 @@ console.log(`server: ${protocol}://${hostname}:${port}`);
 
 // setup websockets
 let io = require('socket.io')(app);
-io.on('connection', handleSockets);
+io.on('connection', radioConnection);
