@@ -34,7 +34,7 @@ class Radio {
     //   // this.stream = this.context.createMediaStreamSource(stream);
     //   console.log('station.update', station);
     // });
-    // this.sockets.station.emit('station.join', station);
+    this.sockets.station.emit('station.join', station);
   }
 
   leave(station) {
