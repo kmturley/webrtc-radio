@@ -2,46 +2,53 @@ class Radio {
   options = {
     host: window.location.hostname,
     port: window.location.port,
-    onUpdate: () => {}
+    onRadioUpdate: () => {},
+    onStationUpdate: () => {}
   };
-  stations = [];
+  sockets = {
+    radio: null,
+    station: null
+  };
   constructor(options) {
     console.log('Radio', this);
     this.options = {...this.options, ...options};
-    this.socket = io.connect(`//${this.options.host}:${this.options.port}`);
-    this.socket.on('radio.update', (stations) => {
-      this.stations = stations;
-      this.options.onUpdate(stations);
-    });
-    this.socket.on('station.update', (station) => {
-      console.log('station.update', station);
-    });
+    this.sockets.radio = io.connect(`//${this.options.host}:${this.options.port}`);
+    this.sockets.radio.on('radio.update', this.options.onRadioUpdate);
   }
 
   add(station) {
     console.log('Radio.add', station);
-    station.onStart(() => {
-      this.socket.emit('station.start', station);
-    });
-    this.socket.emit('radio.add', station);
+    this.sockets.radio.emit('radio.add', station);
   }
 
   remove(stationId) {
     console.log('Radio.remove', stationId);
-    this.socket.emit('radio.remove', stationId);
+    this.sockets.radio.emit('radio.remove', stationId);
   }
 
   join(station) {
     console.log('Radio.join', station);
-    this.station = io('/' + station.id);
-    // this.station.on('station.update', () => {
-    //   this.stream = this.context.createMediaStreamSource(stream);
+    this.sockets.station = io('/' + station.id);
+    this.sockets.station.on('station.update', this.options.onStationUpdate);
+    // this.sockets.station.on('station.update', (station) => {
+    //   // this.stream = this.context.createMediaStreamSource(stream);
+    //   console.log('station.update', station);
     // });
-    // this.socket.emit('join', station);
+    // this.sockets.station.emit('station.join', station);
   }
 
   leave(station) {
     console.log('Radio.leave', station);
-    // this.socket.emit('leave', listener);
+    this.sockets.station.emit('station.leave', station);
+  }
+
+  start(station, offer) {
+    console.log('Radio.start', station, offer);
+    this.sockets.station.emit('station.start', station, offer);
+  }
+
+  stop(station, offer) {
+    console.log('Radio.stop', station, offer);
+    this.sockets.station.emit('station.stop', station, offer);
   }
 }

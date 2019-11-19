@@ -1,25 +1,29 @@
 (function () {
-  let listener = new Listener();
-  let radio = new Radio({
-    onUpdate: onRadioUpdate
+  let myListener = new Listener();
+  let myRadio = new Radio({
+    onRadioUpdate: onRadioUpdate,
+    onStationUpdate: onStationUpdate
   });
   let myStation;
 
   elStationCreate.addEventListener('click', () => {
     toggleClass('hide', [elStation, elBroadcast]);
-    myStation = new Station(elStationId.value);
-    radio.add(myStation);
+    myStation = new Station(elStationId.value, {
+      onStart: (myOffer) => {
+        radio.start(myStation, myOffer);
+      }
+    });
+    myRadio.add(myStation);
   });
 
   elStationRemove.addEventListener('click', () => {
     toggleClass('hide', [elStation, elBroadcast]);
-    radio.remove(myStation.id);
+    myRadio.remove(myStation.id);
   });
   
   elBroadcastStart.addEventListener('click', async () => {
     toggleAttribute('disabled', [elBroadcastStart, elBroadcastStop]);
-    const offer = await myStation.start();
-    console.log('offer.sdp', offer.sdp);
+    myStation.start();
   });
 
   elBroadcastStop.addEventListener('click', () => {
@@ -27,22 +31,36 @@
     myStation.stop();
   });
 
-  function onRadioUpdate(stations) {
-    addChildren(elStations, stations, 'li', (station) => {
-      radio.join(station);
+  function onRadioUpdate(radio) {
+    console.log('radio.update', radio);
+    // update stations
+    addChildren(elStations, radio.stations, 'li', (item) => {
+      return `${item.id} (${item.listeners.length})`;
+    }, (station) => {
+      myRadio.join(station);
     });
+    // update listeners
+    addChildren(elListeners, radio.listeners, 'li', (item) => {
+      return item;
+    });
+  }
+
+  function onStationUpdate(station, offer) {
+    console.log('onStationUpdate', station, offer);
   }
 
   /* helper methods */
 
-  function addChildren(parent, items, type, click) {
+  function addChildren(parent, items, type, template, click) {
     const fragment = document.createDocumentFragment();
     items.forEach((item) => {
       const el = document.createElement(type);
-      el.textContent = `${item.id} (${item.listeners})`;
-      el.addEventListener('click', () => {
-        click(item);
-      });
+      el.textContent = template(item);
+      if (click) {
+        el.addEventListener('click', () => {
+          click(item);
+        });
+      }
       fragment.appendChild(el);
     });
     removeChildren(parent);

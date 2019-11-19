@@ -1,7 +1,6 @@
 class Station {
   id = 'none';
   listeners = 0;
-  onStart = () => {};
   options = {
     constraints: {
       audio: {
@@ -19,7 +18,8 @@ class Station {
       offerToReceiveAudio: 1,
       offerToReceiveVideo: 0,
       voiceActivityDetection: false
-    }
+    },
+    onStart: () => {}
   }
   constructor(id, options) {
     this.id = id ? id : this.id;
@@ -39,8 +39,7 @@ class Station {
     const offer = await this.connection.createOffer(this.options.offerOptions);
     await this.connection.setLocalDescription(offer);
     offer.sdp = this.maybePreferCodec(offer.sdp, 'audio', 'send', 'opus');
-    console.log('parent radio', this.radio);
-    return offer;
+    this.options.onStart(offer);
   }
 
   async stop() {
