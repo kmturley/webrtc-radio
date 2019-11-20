@@ -1,6 +1,6 @@
 class Station {
   id = 'none';
-  listeners = 0;
+  listeners = {};
   options = {
     constraints: {
       audio: {
@@ -19,7 +19,8 @@ class Station {
       offerToReceiveVideo: 0,
       voiceActivityDetection: false
     },
-    onStart: () => {}
+    onStart: () => {},
+    onStop: () => {}
   }
   constructor(id, options) {
     this.id = id ? id : this.id;
@@ -49,6 +50,7 @@ class Station {
     });
     this.connection.close();
     this.connection = null;
+    this.options.onStop();
   }
 
   // Helper functions from:

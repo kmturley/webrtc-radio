@@ -1,26 +1,32 @@
 (function () {
   let myListener = new Listener();
   let myRadio = new Radio({
-    onRadioUpdate: onRadioUpdate,
-    onStationUpdate: onStationUpdate
+    onConnected: onConnected,
+    onAdded: onAdded,
+    onRemoved: onRemoved,
+    onLeft: onLeft,
+    onJoined: onJoined,
+    onUpdate: onUpdate,
   });
+  let myId;
   let myStation;
 
   elStationCreate.addEventListener('click', () => {
-    toggleClass('hide', [elStation, elBroadcast]);
     myStation = new Station(elStationId.value, {
       onStart: (myOffer) => {
-        radio.start(myStation, myOffer);
+        myRadio.start(myStation, myOffer);
+      },
+      onStop: () => {
+        myRadio.stop();
       }
     });
     myRadio.add(myStation);
   });
 
   elStationRemove.addEventListener('click', () => {
-    toggleClass('hide', [elStation, elBroadcast]);
     myRadio.remove(myStation.id);
   });
-  
+
   elBroadcastStart.addEventListener('click', async () => {
     toggleAttribute('disabled', [elBroadcastStart, elBroadcastStop]);
     myStation.start();
@@ -31,36 +37,65 @@
     myStation.stop();
   });
 
-  function onRadioUpdate(radio) {
-    console.log('radio.update', radio);
-    // update stations
-    addChildren(elStations, radio.stations, 'li', (item) => {
-      return `${item.id} (${item.listeners.length})`;
-    }, (station) => {
-      myRadio.join(station);
-    });
-    // update listeners
-    addChildren(elListeners, radio.listeners, 'li', (item) => {
-      return item;
-    });
+  elStations.addEventListener('click', (e) => {
+    const stationId = e.target.getAttribute('data-id');
+    myRadio.join(stationId);
+  });
+
+  // Event handlers
+
+  function onConnected(listenerId) {
+    myId = listenerId;
   }
 
-  function onStationUpdate(station, offer) {
-    console.log('onStationUpdate', station, offer);
+  function onAdded(station) {
+    if (station.owner === myId) {
+      elStation.classList.add('hide');
+      elBroadcast.classList.remove('hide');
+    } else {
+      elStation.classList.remove('hide');
+      elBroadcast.classList.add('hide');
+    }
+  }
+
+  function onRemoved(station) {
+    if (station.owner === myId) {
+      elStation.classList.remove('hide');
+      elBroadcast.classList.add('hide');
+    } else {
+      elStation.classList.add('hide');
+      elBroadcast.classList.remove('hide');
+    }
+  }
+
+  function onJoined(station, offer) {
+    console.log('onJoined', station, offer);
+  }
+
+  function onLeft(station, offer) {
+    console.log('onLeft', station, offer);
+  }
+
+  function onUpdate(radio) {
+    console.log('onUpdate', radio);
+    // update stations
+    addChildren(elStations, radio.stations, 'li', (items, id) => {
+      return `${id} (${Object.keys(items[id].listeners).length || 0})`;
+    });
+    // update listeners
+    addChildren(elListeners, radio.listeners, 'li', (items, id) => {
+      return id;
+    });
   }
 
   /* helper methods */
 
-  function addChildren(parent, items, type, template, click) {
+  function addChildren(parent, items, type, template) {
     const fragment = document.createDocumentFragment();
-    items.forEach((item) => {
+    Object.keys(items).forEach((id) => {
       const el = document.createElement(type);
-      el.textContent = template(item);
-      if (click) {
-        el.addEventListener('click', () => {
-          click(item);
-        });
-      }
+      el.textContent = template(items, id);
+      el.setAttribute('data-id', id);
       fragment.appendChild(el);
     });
     removeChildren(parent);
@@ -79,16 +114,6 @@
         element[attribute] = false;
       } else {
         element[attribute] = true;
-      }
-    });
-  }
-
-  function toggleClass(classname, elements) {
-    elements.forEach((element) => {
-      if (element.classList.contains(classname)) {
-        element.classList.remove(classname);
-      } else {
-        element.classList.add(classname);
       }
     });
   }
