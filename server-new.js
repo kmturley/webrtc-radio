@@ -149,4 +149,11 @@ function radioConnection(socket) {
       io.to(stationId).emit('radio.stopped', currentStation);
     }
   });
+
+  // notify station owner someone is listening
+  socket.on('radio.listen', (stationId, desc) => {
+    console.log('radio.listen', stationId, desc);
+    currentStation = getStation(stationId);
+    io.to(currentStation.owner).emit('radio.listening', desc);
+  });
 }

@@ -1,4 +1,7 @@
 (function () {
+  let myId;
+  let myListener;
+  // let myListeners = {};
   let myRadio = new Radio({
     onConnected: onConnected,
     onAdded: onAdded,
@@ -7,11 +10,10 @@
     onJoined: onJoined,
     onStarted: onStarted,
     onStopped: onStopped,
+    onListening: onListening,
     onUpdated: onUpdated,
   });
-  let myId;
   let myStation;
-  let myListeners = {};
 
   elStationCreate.addEventListener('click', () => {
     myStation = new Station(elStationId.value, {
@@ -48,6 +50,7 @@
 
   function onConnected(listenerId) {
     myId = listenerId;
+    myListener = new Listener(myId);
   }
 
   function onAdded(station) {
@@ -72,24 +75,31 @@
 
   function onJoined(station) {
     console.log('onJoined', station);
-    Object.keys(station.listeners).forEach((id) => {
-      if (!myListeners[id]) {
-        myListeners[id] = new Listener(id);
-      }
-    });
-    console.log('myListeners', myListeners);
+    // Object.keys(station.listeners).forEach((id) => {
+    //   if (!myListeners[id]) {
+    //     myListeners[id] = new Listener(id);
+    //   }
+    // });
+    // console.log('myListeners', myListeners);
   }
 
   function onLeft(station, offer) {
     console.log('onLeft', station, offer);
   }
 
-  function onStarted(station, offer) {
-    console.log('onStarted', station, offer);
+  async function onStarted(station) {
+    console.log('onStarted', station);
+    const desc = await myListener.connect(station.offer);
+    myRadio.listen(station.id, desc);
   }
 
   function onStopped(station, offer) {
     console.log('onStopped', station, offer);
+  }
+
+  function onListening(returnOffer) {
+    console.log('onListening', returnOffer);
+    myStation.connect(returnOffer);
   }
 
   function onUpdated(radio) {

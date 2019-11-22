@@ -8,9 +8,18 @@ class Listener {
     this.connection = new RTCPeerConnection();
   }
 
-  async connect(originalOffer) {
-    await this.connection.setRemoteDescription(originalOffer);
-    const newOffer = await this.connection.createAnswer(originalOffer);
-    return this.connection.setLocalDescription(newOffer);
+  async connect(offer) {
+    console.log('Listener.connect', offer);
+    await this.connection.setRemoteDescription(offer);
+    const desc = await this.connection.createAnswer();
+    this.connection.setLocalDescription(desc);
+    desc.sdp = Utils.maybePreferCodec(desc.sdp, 'audio', 'send', 'opus');
+    return desc;
+  }
+
+  disconnect() {
+    console.log('Listener.disconnect');
+    this.connection.close();
+    this.connection = null;
   }
 }

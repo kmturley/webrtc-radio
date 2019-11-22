@@ -9,6 +9,7 @@ class Radio {
     onLeft: () => {},
     onStarted: () => {},
     onStopped: () => {},
+    onListening: () => {},
     onUpdated: () => {},
   };
   constructor(options) {
@@ -22,6 +23,7 @@ class Radio {
     this.socket.on('radio.left', this.options.onLeft);
     this.socket.on('radio.started', this.options.onStarted);
     this.socket.on('radio.stopped', this.options.onStopped);
+    this.socket.on('radio.listening', this.options.onListening);
     this.socket.on('radio.updated', this.options.onUpdated);
   }
 
@@ -53,5 +55,10 @@ class Radio {
   stop(stationId, offer) {
     console.log('Radio.stop', stationId, offer);
     this.socket.emit('radio.stop', stationId, offer);
+  }
+
+  listen(stationId, desc) {
+    console.log('Radio.listen', stationId, desc);
+    this.socket.emit('radio.listen', stationId, desc);
   }
 }
