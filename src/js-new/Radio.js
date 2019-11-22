@@ -7,7 +7,9 @@ class Radio {
     onRemoved: () => {},
     onJoined: () => {},
     onLeft: () => {},
-    onUpdate: () => {},
+    onStarted: () => {},
+    onStopped: () => {},
+    onUpdated: () => {},
   };
   constructor(options) {
     console.log('Radio', this);
@@ -18,7 +20,9 @@ class Radio {
     this.socket.on('radio.removed', this.options.onRemoved);
     this.socket.on('radio.joined', this.options.onJoined);
     this.socket.on('radio.left', this.options.onLeft);
-    this.socket.on('radio.update', this.options.onUpdate);
+    this.socket.on('radio.started', this.options.onStarted);
+    this.socket.on('radio.stopped', this.options.onStopped);
+    this.socket.on('radio.updated', this.options.onUpdated);
   }
 
   add(station) {
@@ -36,18 +40,18 @@ class Radio {
     this.socket.emit('radio.join', stationId);
   }
 
-  leave(station) {
-    console.log('Radio.leave', station);
-    this.socket.emit('radio.leave', station);
+  leave(stationId) {
+    console.log('Radio.leave', stationId);
+    this.socket.emit('radio.leave', stationId);
   }
 
-  start(station, offer) {
-    console.log('Radio.start', station, offer);
-    this.socket.emit('radio.start', station, offer);
+  start(stationId, offer) {
+    console.log('Radio.start', stationId, offer);
+    this.socket.emit('radio.start', stationId, offer);
   }
 
-  stop(station, offer) {
-    console.log('Radio.stop', station, offer);
-    this.socket.emit('radio.stop', station, offer);
+  stop(stationId, offer) {
+    console.log('Radio.stop', stationId, offer);
+    this.socket.emit('radio.stop', stationId, offer);
   }
 }

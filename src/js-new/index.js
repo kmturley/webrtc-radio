@@ -1,23 +1,25 @@
 (function () {
-  let myListener = new Listener();
   let myRadio = new Radio({
     onConnected: onConnected,
     onAdded: onAdded,
     onRemoved: onRemoved,
     onLeft: onLeft,
     onJoined: onJoined,
-    onUpdate: onUpdate,
+    onStarted: onStarted,
+    onStopped: onStopped,
+    onUpdated: onUpdated,
   });
   let myId;
   let myStation;
+  let myListeners = {};
 
   elStationCreate.addEventListener('click', () => {
     myStation = new Station(elStationId.value, {
       onStart: (myOffer) => {
-        myRadio.start(myStation, myOffer);
+        myRadio.start(myStation.id, myOffer);
       },
       onStop: () => {
-        myRadio.stop();
+        myRadio.stop(myStation.id);
       }
     });
     myRadio.add(myStation);
@@ -68,16 +70,30 @@
     }
   }
 
-  function onJoined(station, offer) {
-    console.log('onJoined', station, offer);
+  function onJoined(station) {
+    console.log('onJoined', station);
+    Object.keys(station.listeners).forEach((id) => {
+      if (!myListeners[id]) {
+        myListeners[id] = new Listener(id);
+      }
+    });
+    console.log('myListeners', myListeners);
   }
 
   function onLeft(station, offer) {
     console.log('onLeft', station, offer);
   }
 
-  function onUpdate(radio) {
-    console.log('onUpdate', radio);
+  function onStarted(station, offer) {
+    console.log('onStarted', station, offer);
+  }
+
+  function onStopped(station, offer) {
+    console.log('onStopped', station, offer);
+  }
+
+  function onUpdated(radio) {
+    console.log('onUpdated', radio);
     // update stations
     addChildren(elStations, radio.stations, 'li', (items, id) => {
       return `${id} (${Object.keys(items[id].listeners).length || 0})`;
