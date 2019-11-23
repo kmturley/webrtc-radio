@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Web RTC Audio Broadcast</title>
+  <meta name="description" content="" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+  <h1>Web RTC Audio Broadcast</h1>
+  <div class="controls">
+    <input type="text" id="inputName" value="test" />
+    <button id="buttonCreate" class="connect">Create station</button>
+    <button id="buttonJoin" class="connect">Join station</button>
+  </div>
+  <div class="station">
+    <h2 id="stationName"></h2>
+    <h3 id="stationType"></h3>
+    <p id="stationListeners"></p>
+  </div>
+  <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+  <script src="js/Listener.js"></script>
+  <script src="js/Station.js"></script>
+  <script src="js/Radio.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
