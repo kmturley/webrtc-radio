@@ -1,27 +1,32 @@
-(function () {
-  const radio = new Radio();
+import adapter from 'webrtc-adapter';
 
-  const buttonCreate = document.getElementById('buttonCreate');
-  const buttonJoin = document.getElementById('buttonJoin');
-  const stationName = document.getElementById('stationName');
-  const stationType = document.getElementById('stationType');
-  const inputName = document.getElementById('inputName');
+import { Radio } from './Radio';
+import { Station } from './Station';
 
-  function updateStation(message) {
-    let stationId = inputName.value;
-    stationName.innerHTML = stationId;
-    stationType.innerHTML = message;
-    radio.leaveAll();
-    radio.join(stationId);
-  }
+import '../css/index.scss';
 
-  buttonCreate.addEventListener('click', async () => {
-    var station = new Station(radio.context, radio.outgoing);
-    await station.start();
-    updateStation('Broadcasting to:');
-  });
+const radio = new Radio();
 
-  buttonJoin.addEventListener('click', () => {
-    updateStation('Listening to:');
-  });
-})();
+const buttonCreate = document.getElementById('buttonCreate');
+const buttonJoin = document.getElementById('buttonJoin');
+const stationName = document.getElementById('stationName');
+const stationType = document.getElementById('stationType');
+const inputName = document.getElementById('inputName');
+
+function updateStation(message) {
+  let stationId = inputName.value;
+  stationName.innerHTML = stationId;
+  stationType.innerHTML = message;
+  radio.leaveAll();
+  radio.join(stationId);
+}
+
+buttonCreate.addEventListener('click', async () => {
+  var station = new Station(radio.context, radio.outgoing);
+  await station.start();
+  updateStation('Broadcasting to:');
+});
+
+buttonJoin.addEventListener('click', () => {
+  updateStation('Listening to:');
+});

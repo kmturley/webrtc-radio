@@ -1,11 +1,14 @@
-class Radio {
+import io from 'socket.io-client';
+import { Listener } from './Listener';
+
+export class Radio {
   ip = window.location.hostname;
   offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 0
   };
   listeners = {};
-  port = window.location.port;
+  port = 8080 || window.location.port;
   stations = [];
 
   constructor() {

@@ -1,12 +1,11 @@
 const fs = require('fs');
-const os = require('os');
 
 const hostname = '0.0.0.0';
 const keys = './keys';
 const max = 50;
 const port = 8080;
 const protocol = 'https';
-const root = '/src';
+const root = '/dist';
 
 function createServer(proto, handler) {
   if (proto === 'https') {

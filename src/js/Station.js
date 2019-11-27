@@ -1,4 +1,4 @@
-class Station {
+export class Station {
   constraints = {
     audio: {
       autoGainControl: false,

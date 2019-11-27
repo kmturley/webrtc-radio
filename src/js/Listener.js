@@ -1,4 +1,4 @@
-class Listener {
+export class Listener {
   offered = false;
   answered = false;
   conn = null;
