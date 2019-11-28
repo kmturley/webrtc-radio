@@ -67,7 +67,9 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "webrtc-audio-broadcast:build"
+            "browserTarget": "webrtc-audio-broadcast:build",
+            "sslKey": "./keys/client-key.pem",
+            "sslCert": "./keys/client-cert.pem"
           },
           "configurations": {
             "production": {

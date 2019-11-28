@@ -1,27 +1,78 @@
-# WebrtcAudioBroadcast
+# webrtc-audio-broadcast
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.19.
+WebRTC audio broadcast running across local network using:
 
-## Development server
+* WebRTC
+* Angular 8.2.x
+* NodeJS 10.16.x
+* socket.io 2.3.x
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
-## Code scaffolding
+## Installation
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Install dependencies using:
 
-## Build
+     npm install
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Generate an SSL key and certificate using:
 
-## Running unit tests
+    npm run generate
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
 
-## Running end-to-end tests
+## Usage
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+Run production HTTPS and Socket.io local servers using:
 
-## Further help
+    npm start
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Access the web frontend at:
+
+    https://localhost:8080
+
+
+## Development with live reload
+
+In seperate terminals run the dev servers using:
+
+    npm run dev:backend
+    npm run dev:frontend
+
+Go to both urls and allow unsafe browser access to https at:
+
+    https://localhost:8080
+    https://localhost:4200
+
+Then develop using the live reload page at:
+
+    https://localhost:4200
+
+
+## Understanding SDP output
+
+Create a file containing the SDP data called:
+
+    sdp.txt
+
+To then convert into a human readable structured output run:
+
+    npm run parser
+
+Then open the generated file:
+
+    sdp.json
+
+
+## Limitations
+
+1) Maximum bitrate is 520kb/s stereo, which is 260kps per channel.
+2) Actual bitrate depends on the speed of your network and strength of your signal.
+
+
+## Directory structure
+
+    /src                           --> Web source files
+
+
+## Contact
+
+For more information please contact kmturley

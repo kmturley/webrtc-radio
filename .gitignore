@@ -44,3 +44,8 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Ignore keys and debugging files
+keys
+sdp.txt
+sdp.json
