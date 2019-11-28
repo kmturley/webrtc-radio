@@ -1,11 +1,13 @@
 <h1>Web RTC Audio Broadcast</h1>
-<div class="controls">
+<div *ngIf="!joined">
   <input type="text" [(ngModel)]="stationId" />
   <button class="create" (click)="create()">Create station</button>
   <button class="join" (click)="join()">Join station</button>
 </div>
-<div class="station">
-  <h2 id="stationName"></h2>
-  <h3 id="stationType"></h3>
-  <p id="stationListeners"></p>
+<div *ngIf="joined">
+  <h2>{{ owner == true ? 'Broadcasting' : 'Listening'}} to {{ stationId }}</h2>
+  <p>Listeners: {{ (radio.listeners | keyvalue).length }}</p>
+  <ul>
+    <li *ngFor="let listener of radio.listeners | keyvalue">{{ listener.key }}</li>
+  </ul>
 </div>
