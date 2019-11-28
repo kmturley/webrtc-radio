@@ -53,9 +53,9 @@ export class ListenerService {
     });
   }
   cleanup() {
-    if (this.titleElem) {
-      this.titleElem.remove();
-    }
+    // if (this.titleElem) {
+    //   this.titleElem.remove();
+    // }
     if (this.audioElem) {
       this.audioElem.remove();
     }
@@ -65,9 +65,9 @@ export class ListenerService {
     if (this.gainNode) {
       this.gainNode.disconnect();
     }
-    if (this.muteButton) {
-      this.muteButton.remove();
-    }
+    // if (this.muteButton) {
+    //   this.muteButton.remove();
+    // }
     this.iceCandidates = [];
   }
 
@@ -117,14 +117,14 @@ export class ListenerService {
   }
 
   gotRemoteMediaStream(event) {
-    const stationListeners = document.getElementById('stationListeners');
+    // const stationListeners = document.getElementById('stationListeners');
     const remoteStream = event.streams[0];
     const audioTracks = remoteStream.getAudioTracks();
-    if (!this.titleElem) {
-      this.titleElem = document.createElement('h3');
-      this.titleElem.innerHTML = `${this.id}:`;
-      stationListeners.appendChild(this.titleElem);
-    }
+    // if (!this.titleElem) {
+    //   this.titleElem = document.createElement('h3');
+    //   this.titleElem.innerHTML = `${this.id}:`;
+    //   stationListeners.appendChild(this.titleElem);
+    // }
     if (audioTracks.length > 0) {
       let audioElem = new Audio();
       audioElem.autoplay = true;
@@ -139,18 +139,18 @@ export class ListenerService {
       this.gainNode.connect(this.incomingMedia);
       this.audioNode = this.audioContext.createMediaStreamSource(remoteStream);
       this.audioNode.connect(this.gainNode);
-      this.muteButton = document.createElement('button');
-      this.muteButton.innerHTML = 'Mute';
-      this.muteButton.addEventListener('click', () => {
-        if (this.muteButton.innerHTML === 'Mute') {
-          this.gainNode.gain.value = 0;
-          this.muteButton.innerHTML = 'Unmute';
-        } else {
-          this.gainNode.gain.value = 1;
-          this.muteButton.innerHTML = 'Mute';
-        }
-      });
-      stationListeners.appendChild(this.muteButton);
+      // this.muteButton = document.createElement('button');
+      // this.muteButton.innerHTML = 'Mute';
+      // this.muteButton.addEventListener('click', () => {
+      //   if (this.muteButton.innerHTML === 'Mute') {
+      //     this.gainNode.gain.value = 0;
+      //     this.muteButton.innerHTML = 'Unmute';
+      //   } else {
+      //     this.gainNode.gain.value = 1;
+      //     this.muteButton.innerHTML = 'Mute';
+      //   }
+      // });
+      // stationListeners.appendChild(this.muteButton);
       this.audioContext.resume();
     }
     this.trace(`Received remote stream from ${this.id}.`);
