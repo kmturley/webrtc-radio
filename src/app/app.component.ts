@@ -25,12 +25,13 @@ export class AppComponent {
     const station = new StationService(this.radio.context, this.radio.outgoing);
     await station.start();
     this.owner = true;
-    this.join();
+    this.join(this.stationId);
   }
 
-  join() {
+  join(id: string) {
     this.joined = true;
     this.radio.leaveAll();
-    this.radio.join(this.stationId);
+    this.radio.join(id);
+    this.stationId = id;
   }
 }

@@ -2,7 +2,14 @@
 <div *ngIf="!joined">
   <input type="text" [(ngModel)]="stationId" />
   <button class="create" (click)="create()">Create station</button>
-  <button class="join" (click)="join()">Join station</button>
+  <button class="join" (click)="join(stationId)">{{ station }}</button>
+  <p>Stations: {{ radio.stations.length }}</p>
+  <ul>
+    <li *ngFor="let station of radio.stations">
+      {{ station }}
+      <button class="join" (click)="join(station)">{{ station }}</button>
+    </li>
+  </ul>
 </div>
 <div *ngIf="joined">
   <h2>{{ owner == true ? 'Broadcasting' : 'Listening'}} to {{ stationId }}</h2>
