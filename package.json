@@ -4,7 +4,7 @@
   "scripts": {
     "build": "ng build",
     "dev:backend": "nodemon ./server.js",
-    "dev:frontend": "ng serve --ssl --host 0.0.0.0",
+    "dev:frontend": "ng serve --host 0.0.0.0 --open --ssl",
     "e2e": "ng e2e",
     "generate": "mkdir ./keys && openssl genrsa -out ./keys/client-key.pem 2048 && openssl req -new -key ./keys/client-key.pem -out ./keys/client.csr && openssl x509 -req -in ./keys/client.csr -signkey ./keys/client-key.pem -out ./keys/client-cert.pem",
     "ng": "ng",

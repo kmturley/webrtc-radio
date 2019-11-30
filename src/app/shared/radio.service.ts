@@ -19,64 +19,78 @@ export class RadioService {
     offerToReceiveVideo: 0
   };
   listeners = {};
+  listenerServices = {};
   port = 8080 || window.location.port;
-  stations = [];
+  station = null;
+  stations = {};
+  stationsJoined = [];
 
   constructor() {
+    console.log('Radio.init');
     window.AudioContext = (window.AudioContext || window.webkitAudioContext);
     this.context = new AudioContext();
     this.outgoing = this.context.createMediaStreamDestination();
     this.incoming = this.context.createGain();
     this.incoming.connect(this.context.destination);
-
     this.socket = io.connect(`//${this.ip}:${this.port}`);
-    this.trace(`Created socket.`);
 
-    this.socket.on('created', (stationId, socketId) => {
-      this.trace(`${socketId} successfully created ${stationId}.`);
-      this.stations.push(stationId);
+    this.socket.on('listeners.updated', (listeners: object) => {
+      console.log('Radio.listeners.updated', listeners);
+      this.listeners = listeners;
     });
 
-    this.socket.on('joined', (stationId, socketId) => {
-      this.trace(`${socketId} successfully joined ${stationId}.`);
-      this.stations.push(stationId);
+    this.socket.on('stations.updated', (stations: object) => {
+      console.log('Radio.stations.updated', stations);
+      this.stations = stations;
+      if (this.station) {
+        this.station = this.stations[this.station.id];
+      }
     });
 
-    this.socket.on('full', (stationId) => {
-      console.warn(`Station ${stationId} is full.`);
+    this.socket.on('joined', (stationId: string) => {
+      console.log('Radio.joined', stationId);
+      this.station = this.stations[stationId];
     });
 
-    this.socket.on('ipaddr', (ipaddr) => {
-      this.trace(`Server IP address: ${ipaddr}`);
+    this.socket.on('left', (stationId: string) => {
+      console.log('Radio.left', stationId);
+      this.station = null;
     });
 
-    this.socket.on('join', async (socketId) => {
+    this.socket.on('Radio.listener.joined', async (socketId: string) => {
       if (socketId === this.socket.id) {
         return;
       }
-      let listener = this.listeners[socketId];
-      this.trace(`'${socketId}' joined.`);
+      console.log('Radio.listener.joined', socketId);
+      let listener = this.listenerServices[socketId];
       if (listener) {
-        this.disconnected(listener.id);
+        this.disconnect(listener.id);
       }
       listener = await this.createListener(socketId, this);
-      this.listeners[listener.id] = listener;
+      this.listenerServices[listener.id] = listener;
       listener.offered = true;
-      this.trace(`createOffer to ${socketId} started.`);
       const offer = await listener.conn.createOffer(this.offerOptions);
       await listener.conn.setLocalDescription(offer);
       this.socket.emit('offer', offer, listener.id);
     });
 
-    this.socket.on('offer', async (offer, socketId) => {
-      let listener = this.listeners[socketId];
-      this.trace(`Offer received from ${socketId}:`);
+    this.socket.on('listener.left', (socketId: string) => {
+      console.log('Radio.listener.left', socketId);
+      const listener = this.listenerServices[socketId];
       if (listener) {
-        console.warn(`Listener already existed at offer.`);
-        listener.reconnect();
+        listener.disconnect();
+      }
+      this.listenerServices[socketId] = null;
+    });
+
+    this.socket.on('offer', async (offer: object, socketId: string) => {
+      let listener = this.listenerServices[socketId];
+      console.log('Radio.offer', offer, socketId);
+      if (listener) {
+        listener.cleanup();
       } else {
         listener = await this.createListener(socketId, this);
-        this.listeners[listener.id] = listener;
+        this.listenerServices[listener.id] = listener;
       }
       listener.answered = true;
       await listener.conn.setRemoteDescription(offer);
@@ -87,57 +101,37 @@ export class RadioService {
       listener.uncacheICECandidates();
     });
 
-    this.socket.on('answer', async (answer, socketId) => {
-      const listener = this.listeners[socketId];
+    this.socket.on('answer', async (answer: object, socketId: string) => {
+      console.log('Radio.answer', answer, socketId);
+      const listener = this.listenerServices[socketId];
       if (!(listener && listener.offered)) {
         console.warn(`Unexpected answer from ${socketId} to ${this.socket.id}.`);
         return;
       }
-      this.trace(`Answer received from ${socketId}:`);
       await listener.conn.setRemoteDescription(answer);
       listener.uncacheICECandidates();
     });
 
-    this.socket.on('candidate', async (candidate, ownerId) => {
-      const listener = this.listeners[ownerId];
+    this.socket.on('candidate', async (candidate: object, ownerId: string) => {
+      console.log('Radio.candidate', candidate, ownerId);
+      const listener = this.listenerServices[ownerId];
       if (!(listener && (listener.offered || listener.answered))) {
         console.warn(`Unexpected ICE candidates from ${ownerId} to ${this.socket.id}.`);
         return;
       }
-      this.trace(`Received ICE candidate for ${ownerId}.`);
       const iceCandidate = new RTCIceCandidate(candidate);
       if (listener.conn && listener.conn.remoteDescription && listener.conn.remoteDescription.type) {
         await listener.conn.addIceCandidate(iceCandidate);
       } else {
-        this.trace(`Cached ICE candidate`);
         listener.iceCandidates.push(iceCandidate);
       }
     });
-
-    this.socket.on('leave', (stationId, socketId) => {
-      const listener = this.listeners[socketId];
-      if (listener) {
-        this.trace(`${socketId} left ${stationId}.`);
-        listener.disconnect();
-      }
-      this.listeners[socketId] = null;
-    });
-  }
-
-  trace(text) {
-    text = text.trim();
-    const now = (performance.now() / 1000).toFixed(3);
-    console.log(now, text);
   }
 
   async createListener(id, radio) {
-    this.trace(`Starting connection to ${id}...`);
+    console.log('Radio.createListener', id, radio);
     const localStream = this.outgoing.stream;
     const audioTracks = localStream.getAudioTracks();
-    this.trace(`Audio tracks:`);
-    if (audioTracks.length > 0) {
-      this.trace(`Using audio device: ${audioTracks[0].label}.`);
-    }
     const listener = new ListenerService(id, radio, this.context, this.incoming);
     if (audioTracks[0]) {
       listener.conn.addTrack(audioTracks[0], localStream);
@@ -145,25 +139,28 @@ export class RadioService {
     return listener;
   }
 
-  join(stationId) {
-    this.trace(`Entering station '${stationId}'...`);
+  add(stationId: string) {
+    console.log('Radio.add', stationId);
+    this.socket.emit('add', stationId);
+  }
+
+  remove(stationId: string) {
+    console.log('Radio.remove', stationId);
+    this.socket.emit('remove', stationId);
+  }
+
+  join(stationId: string) {
+    console.log('Radio.join', stationId);
     this.socket.emit('join', stationId);
   }
 
-  leave(stationId) {
-    this.trace(`Leaving station ${stationId}...`);
+  leave(stationId: string) {
+    console.log('Radio.leave', stationId);
     this.socket.emit('leave', stationId);
-    this.stations = this.stations.filter((val) => val !== stationId);
   }
 
-  leaveAll() {
-    this.stations.forEach((stationId) => {
-      this.leave(stationId);
-    });
-  }
-
-  disconnected(id) {
-    this.listeners[id] = null;
-    this.trace(`Removed ${id} from listener list.`);
+  disconnect(socketId: string) {
+    console.log('Radio.disconnect', socketId);
+    this.listenerServices[socketId] = null;
   }
 }

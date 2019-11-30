@@ -11,27 +11,23 @@ declare var window: any;
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  joined = false;
-  owner = false;
+  station: StationService;
   stationId = 'test';
 
   constructor(
     public radio: RadioService
-  ) {
-    window.radio = this.radio;
+  ) {}
+
+  async create(stationId: string) {
+    this.station = new StationService(this.radio.context, this.radio.outgoing);
+    await this.station.start();
+    this.radio.add(stationId);
+    this.radio.join(stationId);
   }
 
-  async create() {
-    const station = new StationService(this.radio.context, this.radio.outgoing);
-    await station.start();
-    this.owner = true;
-    this.join(this.stationId);
-  }
-
-  join(id: string) {
-    this.joined = true;
-    this.radio.leaveAll();
-    this.radio.join(id);
-    this.stationId = id;
+  remove(stationId: string) {
+    this.station.stop();
+    this.station = null;
+    this.radio.remove(stationId);
   }
 }

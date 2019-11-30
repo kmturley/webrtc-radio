@@ -21,6 +21,7 @@ export class StationService {
   outgoingGain = null;
 
   constructor(context, outgoingDestNode) {
+    console.log('Station.init', context, outgoingDestNode);
     this.context = context;
     this.outgoingGain = this.context.createGain();
     this.outgoingGain.connect(outgoingDestNode);
@@ -28,10 +29,9 @@ export class StationService {
 
   async start() {
     return new Promise((resolve, reject) => {
+      console.log('Station.start');
       navigator.mediaDevices.getUserMedia(this.constraints).then((stream) => {
-        if (this.mySource) {
-          this.mySource.disconnect();
-        }
+        this.stop();
         this.mySource = this.context.createMediaStreamSource(stream);
         this.mySource.connect(this.outgoingGain);
         resolve();
@@ -43,6 +43,7 @@ export class StationService {
   }
 
   stop() {
+    console.log('Station.stop');
     if (this.mySource) {
       this.mySource.disconnect();
     }

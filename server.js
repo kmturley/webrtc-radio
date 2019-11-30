@@ -3,10 +3,12 @@ const os = require('os');
 
 const hostname = '0.0.0.0';
 const keys = './keys';
-const max = 50;
 const port = 8080;
 const protocol = 'https';
 const root = '/src';
+
+const listeners = {};
+const stations = {};
 
 function createServer(proto, handler) {
   if (proto === 'https') {
@@ -36,26 +38,72 @@ function handleRequest(req, res) {
 }
 
 function handleSockets(socket) {
-  socket.on('join', (stationId) => {
-    let clients = io.sockets.adapter.rooms[stationId];
-    let total = clients ? Object.keys(clients.sockets).length : 0;
-    total += 1;
-    console.log(`station ${stationId} has ${total} clients`);
-    if (total === 1) {
-      socket.join(stationId);
-      console.log(`station ${stationId} created by client ${socket.id}`);
-      socket.emit('created', stationId, socket.id);
-    } else if (total < max) {
-      socket.join(stationId);
-      console.log(`station ${stationId} joined by ${socket.id} `);
-      socket.emit('joined', stationId, socket.id);
-      io.to(stationId).emit('join', socket.id);
-    } else {
-      console.log(`station ${stationId} is full at (${max}) clients`);
-      socket.emit('full', stationId);
+  // connect to radio
+  console.log('connect', socket.id);
+  listeners[socket.id] = true;
+  socket.emit('connected', socket.id);
+  socket.emit('stations.updated', stations);
+  io.emit('listeners.updated', listeners);
+
+  // disconnect from radio
+  socket.on('disconnect', () => {
+    console.log('disconnect', socket.id);
+    const myStationId = listeners[socket.id];
+    if (typeof myStationId === 'string') {
+      delete stations[myStationId];
+    }
+    delete listeners[socket.id];
+    socket.emit('disconnected', socket.id);
+    io.emit('listeners.updated', listeners);
+  });
+
+  // add a station
+  socket.on('add', (stationId) => {
+    if (!stations[stationId]) {
+      console.log('add', stationId);
+      listeners[socket.id] = stationId;
+      stations[stationId] = {
+        id: stationId,
+        listeners: [],
+        owner: socket.id,
+      };
+      socket.emit('added', stationId);
+      io.emit('stations.updated', stations);
     }
   });
 
+  // remove a station
+  socket.on('remove', (stationId) => {
+    if (stations[stationId] && stations[stationId].owner === socket.id) {
+      console.log('remove', stationId);
+      listeners[socket.id] = true;
+      delete stations[stationId];
+      socket.emit('removed', stationId);
+      io.emit('stations.updated', stations);
+    }
+  });
+
+  // join a station
+  socket.on('join', (stationId) => {
+    console.log('join', stationId);
+    stations[stationId].listeners.push(socket.id);
+    socket.join(stationId);
+    socket.emit('joined', stationId);
+    io.to(stationId).emit('listener.joined', socket.id);
+    io.emit('stations.updated', stations);
+  });
+
+  // leave a station
+  socket.on('leave', (stationId) => {
+    console.log('leave', stationId);
+    stations[stationId].listeners = stations[stationId].listeners.filter((val) => val !== socket.id);
+    socket.leave(stationId);
+    socket.emit('left', stationId);
+    io.emit('listener.left', socket.id);
+    io.emit('stations.updated', stations);
+  });
+
+  // negotiate audio
   socket.on('offer', (offer, recipientId) => {
     io.to(recipientId).emit('offer', offer, socket.id);
   });
@@ -66,12 +114,6 @@ function handleSockets(socket) {
 
   socket.on('candidate', (candidate, recipientId) => {
     io.to(recipientId).emit('candidate', candidate, socket.id);
-  });
-
-  socket.on('leave', (stationId) => {
-    console.log(`station ${stationId} left by ${socket.id}`);
-    io.to(stationId).emit('leave', stationId, socket.id);
-    socket.leave(stationId);
   });
 }
 
