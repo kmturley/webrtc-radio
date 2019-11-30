@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import io from 'socket.io-client';
 
 import { ListenerService } from './listener.service';
+import { StationModel } from '../models/models';
 
 declare var window: any;
 
@@ -10,9 +11,9 @@ declare var window: any;
 })
 export class RadioService {
   context: AudioContext;
-  outgoing = null;
-  incoming = null;
-  socket = null;
+  outgoing: MediaStreamAudioDestinationNode;
+  incoming: GainNode;
+  socket: any;
   ip = window.location.hostname;
   offerOptions = {
     offerToReceiveAudio: 1,
@@ -21,7 +22,7 @@ export class RadioService {
   listeners = {};
   listenerServices = {};
   port = 8080 || window.location.port;
-  station = null;
+  station: StationModel;
   stations = {};
   stationsJoined = [];
 

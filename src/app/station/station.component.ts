@@ -1,8 +1,8 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { RadioService } from '../shared/radio.service';
-import { StationService } from '../shared/station.service';
+import { RadioService } from '../shared/services/radio.service';
+import { StationService } from '../shared/services/station.service';
 
 @Component({
   selector: 'app-station',

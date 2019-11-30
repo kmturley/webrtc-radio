@@ -2,7 +2,7 @@
   "name": "webrtc-audio-broadcast",
   "version": "0.1.0",
   "scripts": {
-    "build": "ng build",
+    "build": "ng build --aot --prod",
     "dev:backend": "nodemon ./server.js",
     "dev:frontend": "ng serve --host 0.0.0.0 --open --ssl",
     "e2e": "ng e2e",
