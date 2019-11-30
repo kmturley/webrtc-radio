@@ -57,7 +57,7 @@ export class RadioService {
       this.station = null;
     });
 
-    this.socket.on('Radio.listener.joined', async (socketId: string) => {
+    this.socket.on('listener.joined', async (socketId: string) => {
       if (socketId === this.socket.id) {
         return;
       }
