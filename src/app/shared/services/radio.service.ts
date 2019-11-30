@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import io from 'socket.io-client';
 
-import { ListenerService } from './listener.service';
 import { StationModel } from '../models/models';
 
 declare var window: any;
@@ -133,11 +132,15 @@ export class RadioService {
     console.log('Radio.createListener', id, radio);
     const localStream = this.outgoing.stream;
     const audioTracks = localStream.getAudioTracks();
-    const listener = new ListenerService(id, radio, this.context, this.incoming);
+    const listener = this.newListener(id, radio, this.context, this.incoming);
     if (audioTracks[0]) {
       listener.conn.addTrack(audioTracks[0], localStream);
     }
     return listener;
+  }
+
+  newListener(id: string, radio: any, audioContext: AudioContext, incomingMedia: GainNode): any {
+    console.log('newListener', id, radio, audioContext, incomingMedia);
   }
 
   add(stationId: string) {
