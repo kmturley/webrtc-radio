@@ -159,6 +159,16 @@ export class RadioService {
     this.socket.emit('leave', stationId);
   }
 
+  start(stationId: string) {
+    console.log('Radio.start', stationId);
+    this.socket.emit('start', stationId);
+  }
+
+  stop(stationId: string) {
+    console.log('Radio.stop', stationId);
+    this.socket.emit('stop', stationId);
+  }
+
   disconnect(socketId: string) {
     console.log('Radio.disconnect', socketId);
     this.listenerServices[socketId] = null;

@@ -1,0 +1,16 @@
+<div *ngIf="radio.station">
+  <h2>Station: {{ radio.station.id }}</h2>
+  <div *ngIf="radio.station.owner == radio.socket.id">
+    <button class="start" (click)="start()" *ngIf="!radio.station.broadcasting">Start broadcast</button>
+    <button class="stop" (click)="stop()" *ngIf="radio.station.broadcasting">Stop broadcast</button>
+  </div>
+  <h3 class="info">{{ radio.station.broadcasting ? 'Online' : 'Offline' }}</h3>
+  <p>Listeners ({{ radio.station.listeners.length }})</p>
+  <ul>
+    <li *ngFor="let listener of radio.station.listeners">{{ listener }}</li>
+  </ul>
+</div>
+<div *ngIf="!radio.station">
+  <h2>Station not found</h2>
+  <a routerLink="/">View full station list</a>
+</div>

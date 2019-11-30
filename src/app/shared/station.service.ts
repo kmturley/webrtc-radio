@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class StationService {
+  recording = false;
   context = null;
   constraints = {
     audio: {
@@ -34,6 +35,7 @@ export class StationService {
         this.stop();
         this.mySource = this.context.createMediaStreamSource(stream);
         this.mySource.connect(this.outgoingGain);
+        this.recording = true;
         resolve();
       }).catch((e) => {
         console.warn(`Failed to obtain local media stream: ${e}`);
@@ -47,5 +49,6 @@ export class StationService {
     if (this.mySource) {
       this.mySource.disconnect();
     }
+    this.recording = false;
   }
 }

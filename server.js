@@ -37,6 +37,14 @@ function handleRequest(req, res) {
   });
 }
 
+function exists(stationId) {
+  return stations[stationId];
+}
+
+function isOwner(stationId, socket) {
+  return stations[stationId] && stations[stationId].owner === socket.id;
+}
+
 function handleSockets(socket) {
   // connect to radio
   console.log('connect', socket.id);
@@ -59,10 +67,11 @@ function handleSockets(socket) {
 
   // add a station
   socket.on('add', (stationId) => {
-    if (!stations[stationId]) {
+    if (!exists(stationId)) {
       console.log('add', stationId);
       listeners[socket.id] = stationId;
       stations[stationId] = {
+        broadcasting: false,
         id: stationId,
         listeners: [],
         owner: socket.id,
@@ -74,7 +83,7 @@ function handleSockets(socket) {
 
   // remove a station
   socket.on('remove', (stationId) => {
-    if (stations[stationId] && stations[stationId].owner === socket.id) {
+    if (exists(stationId) && isOwner(stationId, socket)) {
       console.log('remove', stationId);
       listeners[socket.id] = true;
       delete stations[stationId];
@@ -85,22 +94,44 @@ function handleSockets(socket) {
 
   // join a station
   socket.on('join', (stationId) => {
-    console.log('join', stationId);
-    stations[stationId].listeners.push(socket.id);
-    socket.join(stationId);
-    socket.emit('joined', stationId);
-    io.to(stationId).emit('listener.joined', socket.id);
-    io.emit('stations.updated', stations);
+    if (exists(stationId)) {
+      console.log('join', stationId);
+      stations[stationId].listeners.push(socket.id);
+      socket.join(stationId);
+      socket.emit('joined', stationId);
+      io.to(stationId).emit('listener.joined', socket.id);
+      io.emit('stations.updated', stations);
+    }
   });
 
   // leave a station
   socket.on('leave', (stationId) => {
-    console.log('leave', stationId);
-    stations[stationId].listeners = stations[stationId].listeners.filter((val) => val !== socket.id);
-    socket.leave(stationId);
-    socket.emit('left', stationId);
-    io.emit('listener.left', socket.id);
-    io.emit('stations.updated', stations);
+    if (exists(stationId)) {
+      console.log('leave', stationId);
+      stations[stationId].listeners = stations[stationId].listeners.filter((val) => val !== socket.id);
+      socket.leave(stationId);
+      socket.emit('left', stationId);
+      io.emit('listener.left', socket.id);
+      io.emit('stations.updated', stations);
+    }
+  });
+
+  // start a broadcast
+  socket.on('start', (stationId) => {
+    if (exists(stationId) && isOwner(stationId, socket)) {
+      stations[stationId].broadcasting = true;
+      socket.emit('started', stationId);
+      io.emit('stations.updated', stations);
+    }
+  });
+
+  // stop a broadcast
+  socket.on('stop', (stationId) => {
+    if (exists(stationId) && isOwner(stationId, socket)) {
+      stations[stationId].broadcasting = false;
+      socket.emit('stopped', stationId);
+      io.emit('stations.updated', stations);
+    }
   });
 
   // negotiate audio
