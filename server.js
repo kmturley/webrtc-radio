@@ -5,7 +5,15 @@ const hostname = '0.0.0.0';
 const keys = './keys';
 const port = 8080;
 const protocol = 'https';
-const root = '/src';
+const root = '/dist';
+const mimeTypes = {
+  'html': 'text/html',
+  'jpeg': 'image/jpeg',
+  'jpg': 'image/jpeg',
+  'png': 'image/png',
+  'js': 'text/javascript',
+  'css': 'text/css'
+};
 
 const listeners = {};
 const stations = {};
@@ -25,14 +33,15 @@ function handleRequest(req, res) {
   if (req.url === '/') {
     req.url = '/index.html';
   }
-  console.log(`server: ${req.url}`);
+  console.log(`server: ${__dirname + root + req.url}`);
   fs.readFile(__dirname + root + req.url, function (err, data) {
     if (err) {
       res.writeHead(404);
       res.end(JSON.stringify(err));
       return;
     }
-    res.writeHead(200);
+    const mimeType = mimeTypes[req.url.split('.').pop()];
+    res.writeHead(200, {'Content-Type': mimeType || 'text/plain'});
     res.end(data);
   });
 }
