@@ -57,7 +57,11 @@ function isOwner(stationId, socket) {
 function handleSockets(socket) {
   // connect to radio
   console.log('connect', socket.id);
-  listeners[socket.id] = true;
+  listeners[socket.id] = {
+    id: socket.id,
+    name: null,
+    owns: null,
+  };
   socket.emit('connected', socket.id);
   socket.emit('stations.updated', stations);
   io.emit('listeners.updated', listeners);
@@ -78,7 +82,7 @@ function handleSockets(socket) {
   socket.on('add', (stationId) => {
     if (!exists(stationId)) {
       console.log('add', stationId);
-      listeners[socket.id] = stationId;
+      listeners[socket.id].owns = stationId;
       stations[stationId] = {
         broadcasting: false,
         id: stationId,
@@ -94,7 +98,7 @@ function handleSockets(socket) {
   socket.on('remove', (stationId) => {
     if (exists(stationId) && isOwner(stationId, socket)) {
       console.log('remove', stationId);
-      listeners[socket.id] = true;
+      listeners[socket.id].owns = null;
       delete stations[stationId];
       socket.emit('removed', stationId);
       io.emit('stations.updated', stations);
@@ -141,6 +145,12 @@ function handleSockets(socket) {
       socket.emit('stopped', stationId);
       io.emit('stations.updated', stations);
     }
+  });
+
+  // update listener name
+  socket.on('updateName', (listenerName) => {
+    listeners[socket.id].name = listenerName;
+    io.emit('listeners.updated', listeners);
   });
 
   // negotiate audio

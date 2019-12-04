@@ -177,4 +177,9 @@ export class RadioService {
     console.log('Radio.disconnect', socketId);
     this.listenerServices[socketId] = null;
   }
+
+  updateName(listenerName: string) {
+    console.log('Radio.updateName', listenerName);
+    this.socket.emit('updateName', listenerName);
+  }
 }

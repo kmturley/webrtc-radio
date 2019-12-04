@@ -11,5 +11,5 @@
 </ul>
 <p>Listeners ({{ (radio.listeners | keyvalue).length }})</p>
 <ul>
-  <li *ngFor="let listener of radio.listeners | keyvalue">{{ listener.key }}<span *ngIf="listener.key == radio.socket.id"> (you)</span></li>
+  <li *ngFor="let listener of radio.listeners | keyvalue">{{ radio.listeners[listener.key].name || radio.listeners[listener.key].id }}<span *ngIf="listener.key == radio.socket.id"> (you)</span></li>
 </ul>
