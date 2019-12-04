@@ -1,15 +1,15 @@
 <div *ngIf="radio.station">
   <a routerLink="/">&lt; Back to all stations</a>
   <h2>Station: {{ radio.station.id }}</h2>
-  <p>Owner: {{ radio.station.owner }}<span *ngIf="radio.station.owner == radio.socket.id"> (you)</span></p>
+  <p>Owner: {{ radio.station.owner.name || radio.station.owner.id }}<span *ngIf="radio.station.owner.id == radio.socket.id"> (you)</span></p>
   <div *ngIf="radio.station.owner == radio.socket.id">
     <button class="start" (click)="start()" *ngIf="!radio.station.broadcasting">Start broadcast</button>
     <button class="stop" (click)="stop()" *ngIf="radio.station.broadcasting">Stop broadcast</button>
   </div>
   <h3 class="info">{{ radio.station.broadcasting ? 'Online' : 'Offline' }}</h3>
-  <p>Listeners ({{ radio.station.listeners.length }})</p>
+  <p>Listeners ({{ (radio.station.listeners | keyvalue).length }})</p>
   <ul>
-    <li *ngFor="let listener of radio.station.listeners">{{ listener }}<span *ngIf="listener == radio.socket.id"> (you)</span></li>
+    <li *ngFor="let listener of radio.station.listeners | keyvalue">{{ radio.station.listeners[listener.key].name || radio.station.listeners[listener.key].id }}<span *ngIf="listener.key == radio.socket.id"> (you)</span></li>
   </ul>
 </div>
 <div *ngIf="!radio.station">

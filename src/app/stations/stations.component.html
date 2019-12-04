@@ -5,7 +5,7 @@
 <ul>
   <li *ngFor="let station of radio.stations | keyvalue">
     <a routerLink="/stations/{{ station.key }}">
-      {{ station.key }} ({{ station.value.listeners.length }})
+      {{ station.key }} ({{ (station.value.listeners | keyvalue).length }})
     </a>
   </li>
 </ul>

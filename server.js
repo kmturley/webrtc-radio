@@ -51,7 +51,7 @@ function exists(stationId) {
 }
 
 function isOwner(stationId, socket) {
-  return stations[stationId] && stations[stationId].owner === socket.id;
+  return stations[stationId] && stations[stationId].owner.id === socket.id;
 }
 
 function handleSockets(socket) {
@@ -86,8 +86,8 @@ function handleSockets(socket) {
       stations[stationId] = {
         broadcasting: false,
         id: stationId,
-        listeners: [],
-        owner: socket.id,
+        listeners: {},
+        owner: listeners[socket.id],
       };
       socket.emit('added', stationId);
       io.emit('stations.updated', stations);
@@ -109,7 +109,7 @@ function handleSockets(socket) {
   socket.on('join', (stationId) => {
     if (exists(stationId)) {
       console.log('join', stationId);
-      stations[stationId].listeners.push(socket.id);
+      stations[stationId].listeners[socket.id] = listeners[socket.id];
       socket.join(stationId);
       socket.emit('joined', stationId);
       io.to(stationId).emit('listener.joined', socket.id);
@@ -121,7 +121,7 @@ function handleSockets(socket) {
   socket.on('leave', (stationId) => {
     if (exists(stationId)) {
       console.log('leave', stationId);
-      stations[stationId].listeners = stations[stationId].listeners.filter((val) => val !== socket.id);
+      delete stations[stationId].listeners[socket.id];
       socket.leave(stationId);
       socket.emit('left', stationId);
       io.emit('listener.left', socket.id);
