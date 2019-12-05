@@ -1,7 +1,10 @@
-<div class="logo">
-  WebRTC Audio Broadcast
+<div class="nav">
+  <a class="logo" routerLink="/">WebRTC Audio Broadcast</a>
+  <ul>
+    <li><a routerLink="/">Stations ({{ (radio.stations | keyvalue).length }})</a></li>
+    <li><a routerLink="/listeners">Listeners ({{ (radio.listeners | keyvalue).length }})</a></li>
+  </ul>
 </div>
 <div class="user">
-  <input type="text" placeholder="Alias" [(ngModel)]="inputName" />
-  <button class="save" (click)="save(inputName)">Save</button>
+  <a routerLink="/listeners/{{ radio.socket.id }}">My profile</a>
 </div>

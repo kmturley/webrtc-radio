@@ -1,0 +1,8 @@
+<h1>Listeners ({{ (radio.listeners | keyvalue).length }})</h1>
+<ul>
+  <li *ngFor="let listener of radio.listeners | keyvalue">
+    <a routerLink="/listeners/{{ listener.key }}">
+      {{ radio.listeners[listener.key].name || radio.listeners[listener.key].id }}<span *ngIf="listener.key == radio.socket.id"> (you)</span>
+    </a>
+  </li>
+</ul>

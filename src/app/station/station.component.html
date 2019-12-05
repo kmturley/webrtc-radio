@@ -9,7 +9,11 @@
   <h3 class="info">{{ radio.station.broadcasting ? 'Online' : 'Offline' }}</h3>
   <p>Listeners ({{ (radio.station.listeners | keyvalue).length }})</p>
   <ul>
-    <li *ngFor="let listener of radio.station.listeners | keyvalue">{{ radio.station.listeners[listener.key].name || radio.station.listeners[listener.key].id }}<span *ngIf="listener.key == radio.socket.id"> (you)</span></li>
+    <li *ngFor="let listener of radio.station.listeners | keyvalue">
+      <a routerLink="/listeners/{{ listener.key }}">
+        {{ radio.station.listeners[listener.key].name || radio.station.listeners[listener.key].id }}<span *ngIf="listener.key == radio.socket.id"> (you)</span>
+      </a>
+    </li>
   </ul>
 </div>
 <div *ngIf="!radio.station">

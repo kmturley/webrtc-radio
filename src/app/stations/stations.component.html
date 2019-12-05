@@ -1,15 +1,10 @@
-<h1>Stations</h1>
+<h1>Stations ({{ (radio.stations | keyvalue).length }})</h1>
 <input type="text" [(ngModel)]="inputMessage" />
 <button class="create" (click)="create(inputMessage)">Create station</button>
-<p>Stations ({{ (radio.stations | keyvalue).length }})</p>
 <ul>
   <li *ngFor="let station of radio.stations | keyvalue">
     <a routerLink="/stations/{{ station.key }}">
       {{ station.key }} ({{ (station.value.listeners | keyvalue).length }})
     </a>
   </li>
-</ul>
-<p>Listeners ({{ (radio.listeners | keyvalue).length }})</p>
-<ul>
-  <li *ngFor="let listener of radio.listeners | keyvalue">{{ radio.listeners[listener.key].name || radio.listeners[listener.key].id }}<span *ngIf="listener.key == radio.socket.id"> (you)</span></li>
 </ul>
