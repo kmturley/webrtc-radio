@@ -1,5 +1,4 @@
 <div *ngIf="radio.station">
-  <a routerLink="/">&lt; Back to all stations</a>
   <h2>Station: {{ radio.station.id }}</h2>
   <p>Owner: {{ radio.station.owner.name || radio.station.owner.id }}<span *ngIf="radio.station.owner.id == radio.socket.id"> (you)</span></p>
   <div *ngIf="radio.station.owner == radio.socket.id">
