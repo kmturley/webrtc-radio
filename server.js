@@ -69,13 +69,16 @@ function handleSockets(socket) {
   // disconnect from radio
   socket.on('disconnect', () => {
     console.log('disconnect', socket.id);
-    const myStationId = listeners[socket.id];
+    const myStationId = listeners[socket.id].owns;
     if (typeof myStationId === 'string') {
       delete stations[myStationId];
+      io.emit('stations.updated', stations);
     }
-    delete listeners[socket.id];
+    if (listeners[socket.id]) {
+      delete listeners[socket.id];
+      io.emit('listeners.updated', listeners);
+    }
     socket.emit('disconnected', socket.id);
-    io.emit('listeners.updated', listeners);
   });
 
   // add a station

@@ -45,6 +45,5 @@ export class StationComponent implements OnDestroy, OnInit {
 
   ngOnDestroy() {
     this.radio.leave(this.stationId);
-    this.radio.remove(this.stationId);
   }
 }
