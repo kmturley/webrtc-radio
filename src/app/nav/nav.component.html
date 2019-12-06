@@ -1,8 +1,8 @@
 <div class="nav">
-  <a class="logo" routerLink="/">WebRTC Audio Broadcast</a>
+  <div class="logo">Radio</div>
   <ul>
-    <li><a routerLink="/stations">Stations ({{ (radio.stations | keyvalue).length }})</a></li>
-    <li><a routerLink="/listeners">Listeners ({{ (radio.listeners | keyvalue).length }})</a></li>
+    <li><a routerLink="/stations" [ngClass]="{'active': isActive('/stations')}">Stations</a></li>
+    <li><a routerLink="/listeners" [ngClass]="{'active': isActive('/listeners')}">Listeners</a></li>
   </ul>
 </div>
 <div class="user">

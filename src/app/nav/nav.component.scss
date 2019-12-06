@@ -1,22 +1,43 @@
+@import '../shared/variables.scss';
+
 :host {
-  background-color: antiquewhite;
+  background-color: rgba(50, 50, 50, .5);
+  box-sizing: border-box;
   display: flex;
   justify-content: space-between;
-  padding: 1rem;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 3;
 }
 
-.logo {
-  margin: 0 1rem 0 0;
+.nav {
+  display: flex;
+
+  .logo {
+    font-weight: bold;
+    padding: $pad-h $pad-w;
+  }
+}
+
+a {
+  display: inline-block;
+  padding: $pad-h 0;
+  margin: 0 $pad-w;
+
+  &.active {
+    border-bottom: 2px solid $color-white;
+  }
 }
 
 ul {
-  display: inline-block;
+  display: flex;
   list-style: none;
   margin: 0;
   padding: 0;
 
   li {
     display: inline-block;
-    margin: 0 1rem 0 0;
   }
 }

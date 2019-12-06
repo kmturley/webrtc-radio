@@ -1,9 +1,11 @@
-<h1>Listener</h1>
-<div class="details" *ngIf="radio.listeners[userId]">
-  <p>Name: {{ radio.listeners[userId].name }}</p>
-  <p>Id: {{ radio.listeners[userId].id }}</p>
-</div>
-<div class="user" *ngIf="userId == radio.socket.id">
-  <input type="text" placeholder="Alias" [(ngModel)]="inputName" />
-  <button class="save" (click)="save(inputName)">Save</button>
+<div class="section">
+  <h1>Listener</h1>
+  <div class="details" *ngIf="radio.listeners[userId]">
+    <p>Name: {{ radio.listeners[userId].name }}</p>
+    <p>Id: {{ radio.listeners[userId].id }}</p>
+  </div>
+  <div class="user" *ngIf="userId == radio.socket.id">
+    <input type="text" placeholder="Alias" [(ngModel)]="inputName" />
+    <button class="save" (click)="save(inputName)">Save</button>
+  </div>
 </div>

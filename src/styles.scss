@@ -1,4 +1,9 @@
+@import './app/shared/variables.scss';
+
 body {
+  background-color: $color-shark;
+  color: $color-white;
+  font-family: sans-serif;
   margin: 0;
 }
 
@@ -7,5 +12,32 @@ h2,
 h3,
 h4,
 p {
+  font-weight: normal;
   margin: 0 0 1rem;
+}
+
+button,
+input,
+select {
+  background-color: $color-mine-shaft;
+  border: 2px solid $color-white;
+  border-radius: .25rem;
+  color: $color-white;
+  font-family: sans-serif;
+  font-size: 1rem;
+  margin-right: .5rem;
+  padding: $pad-h / 2 $pad-w / 2;
+}
+
+a {
+  color: $color-white;
+  text-decoration: none;
+}
+
+.section {
+  padding: $pad-h $pad-w;
+
+  &:first-of-type {
+    margin-top: 50px;
+  }
 }

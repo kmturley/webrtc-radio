@@ -1,4 +1,4 @@
-<div *ngIf="radio.station">
+<div class="section" *ngIf="radio.station">
   <h2>Station: {{ radio.station.id }}</h2>
   <p>Owner: {{ radio.station.owner.name || radio.station.owner.id }}<span *ngIf="radio.station.owner.id == radio.socket.id"> (you)</span></p>
   <div *ngIf="radio.station.owner.id == radio.socket.id">
@@ -15,7 +15,7 @@
     </li>
   </ul>
 </div>
-<div *ngIf="!radio.station">
+<div class="section" *ngIf="!radio.station">
   <h2>Station not found</h2>
   <a routerLink="/">View full station list</a>
 </div>
