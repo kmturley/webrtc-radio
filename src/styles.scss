@@ -35,9 +35,11 @@ a {
 }
 
 .section {
+  margin: 0 auto;
+  max-width: $width-md;
   padding: $pad-h $pad-w;
 
   &:first-of-type {
-    margin-top: 50px;
+    margin-top: $pad-h * 4;
   }
 }
