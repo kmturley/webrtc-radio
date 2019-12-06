@@ -8,12 +8,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { StationComponent } from './station/station.component';
 import { StationsComponent } from './stations/stations.component';
+import { NavComponent } from './nav/nav.component';
+import { ListenersComponent } from './listeners/listeners.component';
+import { ListenerComponent } from './listener/listener.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     StationComponent,
-    StationsComponent
+    StationsComponent,
+    NavComponent,
+    ListenersComponent,
+    ListenerComponent
   ],
   imports: [
     BrowserModule,

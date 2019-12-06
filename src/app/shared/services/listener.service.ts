@@ -1,55 +1,51 @@
 import { Injectable } from '@angular/core';
 
-import { RadioService } from './radio.service';
-
 @Injectable({
   providedIn: 'root'
 })
 export class ListenerService {
   id: string;
-  radio: RadioService;
-  audioContext = null;
-  incomingMedia = null;
+  radio: any;
+  audioContext: AudioContext;
+  incomingMedia: GainNode;
   offered = false;
   answered = false;
-  conn = null;
-  sendChannel = null;
-  recvChannel = null;
+  conn: RTCPeerConnection;
+  sendChannel: RTCDataChannel;
+  recvChannel: any;
   iceCandidates = [];
-  titleElem = null;
-  audioElem = null;
-  audioNode = null;
-  gainNode = null;
-  muteButton = null;
+  audioElem: HTMLAudioElement;
+  audioNode: MediaStreamAudioSourceNode;
+  gainNode: GainNode;
 
-  constructor(id, radio, audioContext, incomingMedia) {
+  constructor(id: string, radio: any, audioContext: AudioContext, incomingMedia: GainNode) {
     console.log('Listener.init', id, radio, audioContext, incomingMedia);
     this.id = id;
     this.radio = radio;
     this.audioContext = audioContext;
     this.incomingMedia = incomingMedia;
     this.conn = new RTCPeerConnection();
-    this.conn.addEventListener('icecandidate', (event) => {
+    this.conn.addEventListener('icecandidate', (event: any) => {
       this.handleIceCandidates(event);
     });
-    this.conn.addEventListener('iceconnectionstatechange', (event) => {
+    this.conn.addEventListener('iceconnectionstatechange', (event: any) => {
       this.handleConnectionChange(event);
     });
-    this.conn.addEventListener('track', (event) => {
+    this.conn.addEventListener('track', (event: any) => {
       this.gotRemoteMediaStream(event);
     });
     this.sendChannel = this.conn.createDataChannel('session-info');
     this.sendChannel.addEventListener('open', (event) => {
       console.log('Listener.open', event, this.id);
     });
-    this.conn.addEventListener('datachannel', (event) => {
+    this.conn.addEventListener('datachannel', (event: any) => {
       console.log('Listener.datachannel', event.channel.label, this.id);
       this.recvChannel = event.channel;
       this.recvChannel.addEventListener('message', (msg: any) => {
         console.log('Listener.message', this.id);
         console.dir(JSON.parse(msg.data));
       });
-      this.sendChannel.send(JSON.stringify({ type: 'msg', contents: 'hello' }));
+      this.sendChannel.send(JSON.stringify({type: 'msg', contents: 'hello'}));
     });
   }
 
@@ -76,14 +72,14 @@ export class ListenerService {
     this.radio.disconnect(this.id);
   }
 
-  handleIceCandidates(event) {
+  handleIceCandidates(event: any) {
     console.log('Listener.handleIceCandidates', event);
     if (event.candidate) {
       this.radio.socket.emit('candidate', event.candidate, this.id);
     }
   }
 
-  handleConnectionChange(event) {
+  handleConnectionChange(event: any) {
     console.log('Listener.handleConnectionChange', event);
     if (event.target.iceConnectionState === 'disconnected') {
       this.disconnect();
@@ -102,7 +98,7 @@ export class ListenerService {
     this.iceCandidates = [];
   }
 
-  gotRemoteMediaStream(event) {
+  gotRemoteMediaStream(event: any) {
     console.log('Listener.gotRemoteMediaStream', event);
     const remoteStream = event.streams[0];
     const audioTracks = remoteStream.getAudioTracks();

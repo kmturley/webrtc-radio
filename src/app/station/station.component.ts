@@ -1,8 +1,9 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { RadioService } from '../shared/radio.service';
-import { StationService } from '../shared/station.service';
+import { ListenerService } from '../shared/services/listener.service';
+import { RadioService } from '../shared/services/radio.service';
+import { StationService } from '../shared/services/station.service';
 
 @Component({
   selector: 'app-station',
@@ -16,7 +17,11 @@ export class StationComponent implements OnDestroy, OnInit {
   constructor(
     public radio: RadioService,
     private route: ActivatedRoute,
-  ) { }
+  ) {
+    this.radio.newListener = (id: string, radioService: any, audioContext: AudioContext, incomingMedia: GainNode) => {
+      return new ListenerService(id, radioService, audioContext, incomingMedia);
+    };
+  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
@@ -40,6 +45,5 @@ export class StationComponent implements OnDestroy, OnInit {
 
   ngOnDestroy() {
     this.radio.leave(this.stationId);
-    this.radio.remove(this.stationId);
   }
 }

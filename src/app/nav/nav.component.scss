@@ -1,0 +1,63 @@
+@import '../shared/variables.scss';
+
+:host {
+  background-color: rgba(50, 50, 50, .5);
+  border-bottom: 1px solid rgba(255, 255, 255, .3);
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 3;
+}
+
+.nav {
+  display: flex;
+
+  .logo {
+    align-items: center;
+    display: flex;
+    font-weight: bold;
+    margin: 0 $pad-w;
+
+    .radio {
+      margin-right: .5rem;
+      vertical-align: middle;
+      width: 1rem;
+    }
+  }
+
+  ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  
+    li {
+      display: inline-block;
+    }
+  }
+
+  a {
+    display: inline-block;
+    padding: $pad-h 0;
+    margin: 0 $pad-w;
+  
+    &.active {
+      border-bottom: 2px solid $color-white;
+    }
+  }
+}
+
+.user {
+  align-items: center;
+  display: flex;
+  margin: 0 $pad-w;
+
+  .profile {
+    vertical-align: middle;
+    width: 2rem;
+  }
+}

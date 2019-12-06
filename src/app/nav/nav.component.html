@@ -1,0 +1,15 @@
+<div class="nav">
+  <div class="logo">
+    <img src="../../assets/radio.svg" alt="Radio" class="radio" />
+    Radio
+  </div>
+  <ul>
+    <li><a routerLink="/stations" [ngClass]="{'active': isActive('/stations')}">Stations</a></li>
+    <li><a routerLink="/listeners" [ngClass]="{'active': isActive('/listeners')}">Listeners</a></li>
+  </ul>
+</div>
+<div class="user">
+  <a routerLink="/listeners/{{ radio.socket.id }}">
+    <img src="../../assets/profile.svg" alt="My profile" class="profile" />
+  </a>
+</div>

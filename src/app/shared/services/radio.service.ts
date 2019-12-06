@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import io from 'socket.io-client';
 
-import { ListenerService } from './listener.service';
+import { StationModel } from '../models/models';
 
 declare var window: any;
 
@@ -10,9 +10,9 @@ declare var window: any;
 })
 export class RadioService {
   context: AudioContext;
-  outgoing = null;
-  incoming = null;
-  socket = null;
+  outgoing: MediaStreamAudioDestinationNode;
+  incoming: GainNode;
+  socket: any;
   ip = window.location.hostname;
   offerOptions = {
     offerToReceiveAudio: 1,
@@ -21,7 +21,7 @@ export class RadioService {
   listeners = {};
   listenerServices = {};
   port = 8080 || window.location.port;
-  station = null;
+  station: StationModel;
   stations = {};
   stationsJoined = [];
 
@@ -132,11 +132,15 @@ export class RadioService {
     console.log('Radio.createListener', id, radio);
     const localStream = this.outgoing.stream;
     const audioTracks = localStream.getAudioTracks();
-    const listener = new ListenerService(id, radio, this.context, this.incoming);
+    const listener = this.newListener(id, radio, this.context, this.incoming);
     if (audioTracks[0]) {
       listener.conn.addTrack(audioTracks[0], localStream);
     }
     return listener;
+  }
+
+  newListener(id: string, radio: any, audioContext: AudioContext, incomingMedia: GainNode): any {
+    console.log('newListener', id, radio, audioContext, incomingMedia);
   }
 
   add(stationId: string) {
@@ -172,5 +176,10 @@ export class RadioService {
   disconnect(socketId: string) {
     console.log('Radio.disconnect', socketId);
     this.listenerServices[socketId] = null;
+  }
+
+  updateName(listenerName: string) {
+    console.log('Radio.updateName', listenerName);
+    this.socket.emit('updateName', listenerName);
   }
 }

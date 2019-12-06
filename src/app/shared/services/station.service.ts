@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 })
 export class StationService {
   recording = false;
-  context = null;
+  context: AudioContext;
   constraints = {
     audio: {
       autoGainControl: false,
@@ -18,10 +18,10 @@ export class StationService {
       volume: 1.0
     }
   };
-  mySource = null;
-  outgoingGain = null;
+  mySource: MediaStreamAudioSourceNode;
+  outgoingGain: GainNode;
 
-  constructor(context, outgoingDestNode) {
+  constructor(context: AudioContext, outgoingDestNode: MediaStreamAudioDestinationNode) {
     console.log('Station.init', context, outgoingDestNode);
     this.context = context;
     this.outgoingGain = this.context.createGain();
@@ -31,7 +31,7 @@ export class StationService {
   async start() {
     return new Promise((resolve, reject) => {
       console.log('Station.start');
-      navigator.mediaDevices.getUserMedia(this.constraints).then((stream) => {
+      navigator.mediaDevices.getUserMedia(this.constraints).then((stream: MediaStream) => {
         this.stop();
         this.mySource = this.context.createMediaStreamSource(stream);
         this.mySource.connect(this.outgoingGain);

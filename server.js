@@ -5,7 +5,15 @@ const hostname = '0.0.0.0';
 const keys = './keys';
 const port = 8080;
 const protocol = 'https';
-const root = '/src';
+const root = '/dist';
+const mimeTypes = {
+  'html': 'text/html',
+  'jpeg': 'image/jpeg',
+  'jpg': 'image/jpeg',
+  'png': 'image/png',
+  'js': 'text/javascript',
+  'css': 'text/css'
+};
 
 const listeners = {};
 const stations = {};
@@ -25,14 +33,15 @@ function handleRequest(req, res) {
   if (req.url === '/') {
     req.url = '/index.html';
   }
-  console.log(`server: ${req.url}`);
+  console.log(`server: ${__dirname + root + req.url}`);
   fs.readFile(__dirname + root + req.url, function (err, data) {
     if (err) {
       res.writeHead(404);
       res.end(JSON.stringify(err));
       return;
     }
-    res.writeHead(200);
+    const mimeType = mimeTypes[req.url.split('.').pop()];
+    res.writeHead(200, {'Content-Type': mimeType || 'text/plain'});
     res.end(data);
   });
 }
@@ -42,13 +51,17 @@ function exists(stationId) {
 }
 
 function isOwner(stationId, socket) {
-  return stations[stationId] && stations[stationId].owner === socket.id;
+  return stations[stationId] && stations[stationId].owner.id === socket.id;
 }
 
 function handleSockets(socket) {
   // connect to radio
   console.log('connect', socket.id);
-  listeners[socket.id] = true;
+  listeners[socket.id] = {
+    id: socket.id,
+    name: null,
+    owns: null,
+  };
   socket.emit('connected', socket.id);
   socket.emit('stations.updated', stations);
   io.emit('listeners.updated', listeners);
@@ -56,25 +69,28 @@ function handleSockets(socket) {
   // disconnect from radio
   socket.on('disconnect', () => {
     console.log('disconnect', socket.id);
-    const myStationId = listeners[socket.id];
+    const myStationId = listeners[socket.id].owns;
     if (typeof myStationId === 'string') {
       delete stations[myStationId];
+      io.emit('stations.updated', stations);
     }
-    delete listeners[socket.id];
+    if (listeners[socket.id]) {
+      delete listeners[socket.id];
+      io.emit('listeners.updated', listeners);
+    }
     socket.emit('disconnected', socket.id);
-    io.emit('listeners.updated', listeners);
   });
 
   // add a station
   socket.on('add', (stationId) => {
     if (!exists(stationId)) {
       console.log('add', stationId);
-      listeners[socket.id] = stationId;
+      listeners[socket.id].owns = stationId;
       stations[stationId] = {
         broadcasting: false,
         id: stationId,
-        listeners: [],
-        owner: socket.id,
+        listeners: {},
+        owner: listeners[socket.id],
       };
       socket.emit('added', stationId);
       io.emit('stations.updated', stations);
@@ -85,7 +101,7 @@ function handleSockets(socket) {
   socket.on('remove', (stationId) => {
     if (exists(stationId) && isOwner(stationId, socket)) {
       console.log('remove', stationId);
-      listeners[socket.id] = true;
+      listeners[socket.id].owns = null;
       delete stations[stationId];
       socket.emit('removed', stationId);
       io.emit('stations.updated', stations);
@@ -96,7 +112,7 @@ function handleSockets(socket) {
   socket.on('join', (stationId) => {
     if (exists(stationId)) {
       console.log('join', stationId);
-      stations[stationId].listeners.push(socket.id);
+      stations[stationId].listeners[socket.id] = listeners[socket.id];
       socket.join(stationId);
       socket.emit('joined', stationId);
       io.to(stationId).emit('listener.joined', socket.id);
@@ -108,7 +124,7 @@ function handleSockets(socket) {
   socket.on('leave', (stationId) => {
     if (exists(stationId)) {
       console.log('leave', stationId);
-      stations[stationId].listeners = stations[stationId].listeners.filter((val) => val !== socket.id);
+      delete stations[stationId].listeners[socket.id];
       socket.leave(stationId);
       socket.emit('left', stationId);
       io.emit('listener.left', socket.id);
@@ -132,6 +148,12 @@ function handleSockets(socket) {
       socket.emit('stopped', stationId);
       io.emit('stations.updated', stations);
     }
+  });
+
+  // update listener name
+  socket.on('updateName', (listenerName) => {
+    listeners[socket.id].name = listenerName;
+    io.emit('listeners.updated', listeners);
   });
 
   // negotiate audio

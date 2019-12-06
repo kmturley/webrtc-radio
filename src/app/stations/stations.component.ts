@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SlugifyPipe } from 'angular-pipes';
 import { Router } from '@angular/router';
 
-import { RadioService } from '../shared/radio.service';
+import { RadioService } from '../shared/services/radio.service';
 
 @Component({
   selector: 'app-stations',
