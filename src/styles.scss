@@ -36,10 +36,10 @@ a {
 
 .section {
   margin: 0 auto;
-  max-width: $width-md;
+  max-width: $width-xs;
   padding: $pad-h $pad-w;
 
   &:first-of-type {
-    margin-top: $pad-h * 4;
+    margin-top: $pad-h * 16;
   }
 }

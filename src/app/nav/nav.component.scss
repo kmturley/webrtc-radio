@@ -1,48 +1,43 @@
 @import '../shared/variables.scss';
 
 :host {
-  background-color: rgba(50, 50, 50, .5);
-  border-bottom: 1px solid rgba(255, 255, 255, .3);
+  background-color: $color-ebony-clay;
   box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
   left: 0;
   position: fixed;
+  text-align: center;
   top: 0;
   width: 100%;
   z-index: 3;
 }
 
-.nav {
+.head {
+  background-image: url('../../assets/images/header.jpg');;
+  background-size: cover;
   display: flex;
+  height: 180px;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 32px;
 
   .logo {
-    align-items: center;
-    display: flex;
-    font-weight: bold;
-    margin: 0 $pad-w;
-
-    .radio {
-      margin-right: .5rem;
-      vertical-align: middle;
-      width: 1rem;
-    }
+    margin-bottom: 1rem;
   }
+}
+
+.menu {
+  padding: $pad-h 0 0;
 
   ul {
     display: flex;
     list-style: none;
     margin: 0;
     padding: 0;
-  
-    li {
-      display: inline-block;
-    }
   }
 
   a {
     display: inline-block;
-    padding: $pad-h 0;
+    padding: $pad-h / 2 0;
     margin: 0 $pad-w;
   
     &.active {
@@ -54,7 +49,10 @@
 .user {
   align-items: center;
   display: flex;
-  margin: 0 $pad-w;
+  position: absolute;
+  right: $pad-w;
+  top: $pad-h;
+  z-index: 2;
 
   .profile {
     vertical-align: middle;

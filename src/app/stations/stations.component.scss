@@ -1,0 +1,22 @@
+@import '../shared/variables.scss';
+
+.stations {
+  .stations-list {
+    margin-bottom: 2rem;
+  }
+
+  .station {
+    background-color: $color-black;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    font-size: 2rem;
+    justify-content: flex-end;
+    min-height: 9rem;
+    padding: 2rem;
+
+    &-listeners {
+      font-size: 16px;
+    }
+  }
+}
