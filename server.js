@@ -82,7 +82,7 @@ function handleSockets(socket) {
   });
 
   // add a station
-  socket.on('add', (stationId) => {
+  socket.on('add', (stationId, stationName) => {
     if (!exists(stationId)) {
       console.log('add', stationId);
       listeners[socket.id].owns = stationId;
@@ -90,6 +90,7 @@ function handleSockets(socket) {
         broadcasting: false,
         id: stationId,
         listeners: {},
+        name: stationName,
         owner: listeners[socket.id],
       };
       socket.emit('added', stationId);

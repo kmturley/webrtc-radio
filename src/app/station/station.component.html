@@ -1,11 +1,12 @@
-<div class="station" *ngIf="radio.station">
+<div class="station" *ngIf="radio.station && (!create && !edit)">
   <div class="section details">
     <p>Listening to</p>
-    <h2>{{ radio.station.id }}</h2>
+    <h2>{{ radio.station.name || radio.station.id }}</h2>
     <a routerLink="/stations" class="details-back">
       <img src="../../assets/icons/back.svg" alt="Back" />
       back
     </a>
+    <button class="button details-edit" routerLink="." [queryParams]="{edit: true}">Edit</button>
     <!-- <h3>{{ radio.station.broadcasting ? 'Online' : 'Offline' }}</h3> -->
     <div class="details-bar">
       <a class="details-owner" routerLink="/listeners/{{ radio.station.owner.id }}">
@@ -35,9 +36,38 @@
     </div>
   </div>
 </div>
-<div class="station" *ngIf="!radio.station">
+<div *ngIf="!radio.station && (!create && !edit)">
   <div class="section details">
     <h2>Station not found</h2>
     <a routerLink="/">View full station list</a>
+  </div>
+</div>
+<div *ngIf="radio.station && (create || edit)">
+  <div class="section station-edit">
+    <h1 *ngIf="create">Create station</h1>
+    <h1 *ngIf="edit">Edit station</h1>
+    <form>
+      <div class="input">
+        <label for="name">Name:</label>
+        <input id="name" name="name" type="text" [(ngModel)]="radio.station.name" />
+      </div>
+      <div class="input">
+        <label for="image">Image:</label>
+        <input id="image" name="image" type="file" />
+      </div>
+      <div class="input">
+        <label for="audio">Audio input:</label>
+        <select>
+          <option value="1">Internal Microphone</option>
+        </select>
+        <div class="message">
+          <h3>Select a valid line-in audio source here.</h3>
+          <p>If you do not have an audio line-in, then install iShowU Audio Capture and map both your input and output channels using this guide.</p>
+        </div>
+      </div>
+      <div class="input input-submit">
+        <button class="button" routerLink="." [queryParams]="{}">Create</button>
+      </div>
+    </form>
   </div>
 </div>

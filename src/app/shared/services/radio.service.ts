@@ -143,9 +143,9 @@ export class RadioService {
     console.log('newListener', id, radio, audioContext, incomingMedia);
   }
 
-  add(stationId: string) {
-    console.log('Radio.add', stationId);
-    this.socket.emit('add', stationId);
+  add(stationId: string, stationName: string) {
+    console.log('Radio.add', stationId, stationName);
+    this.socket.emit('add', stationId, stationName);
   }
 
   remove(stationId: string) {

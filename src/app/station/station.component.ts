@@ -11,6 +11,8 @@ import { StationService } from '../shared/services/station.service';
   styleUrls: ['./station.component.scss']
 })
 export class StationComponent implements OnDestroy, OnInit {
+  create = false;
+  edit = false;
   myStation: StationService;
   stationId: string;
 
@@ -24,11 +26,15 @@ export class StationComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
-      this.stationId = params.get('id');
-      this.radio.join(this.stationId);
-      console.log(this.radio);
+    this.route.queryParams.subscribe((queryParams) => {
+      this.create = queryParams.create === 'true' ? true : false;
+      this.edit = queryParams.edit === 'true' ? true : false;
     });
+    this.route.params.subscribe((params) => {
+      this.stationId = params.id;
+      this.radio.join(this.stationId);
+    });
+    console.log('StationComponent', this.radio);
   }
 
   async start() {

@@ -10,4 +10,8 @@
     <li><a routerLink="/stations" [ngClass]="{'active': isActive('/stations')}">Stations</a></li>
     <li><a routerLink="/listeners" [ngClass]="{'active': isActive('/listeners')}">Listeners</a></li>
   </ul>
+  <div class="menu-create">
+    <input type="text" [(ngModel)]="inputMessage" />
+    <button class="create" (click)="create(inputMessage)">Create</button>
+  </div>
 </div>
