@@ -13,6 +13,8 @@ import { StationService } from '../shared/services/station.service';
 export class StationComponent implements OnDestroy, OnInit {
   create = false;
   edit = false;
+  devicesIn = [];
+  devicesOut = [];
   myStation: StationService;
   stationId: string;
 
@@ -34,7 +36,22 @@ export class StationComponent implements OnDestroy, OnInit {
       this.stationId = params.id;
       this.radio.join(this.stationId);
     });
+    this.getDevices();
     console.log('StationComponent', this.radio);
+  }
+
+  getDevices() {
+    this.devicesIn = [];
+    this.devicesOut = [];
+    navigator.mediaDevices.enumerateDevices().then((devices) => {
+      devices.forEach((device) => {
+        if (device.kind === 'audioinput') {
+          this.devicesIn.push(device);
+        } else if (device.kind === 'audiooutput') {
+          this.devicesOut.push(device);
+        }
+      });
+    });
   }
 
   async start() {

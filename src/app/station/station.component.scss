@@ -59,7 +59,6 @@
 }
 
 .station-edit {
-  button,
   input[type='file'],
   input[type='text'],
   select {
@@ -82,13 +81,28 @@
       background-image: url('../../assets/icons/arrow-down.svg');
       background-position: 98% 0%;
       background-repeat: no-repeat;
-      margin-bottom: $pad-h;
     }
 
     .message {
       background-color: $color-white;
       color: $color-black;
+      margin-top: $pad-h * 1.5;
       padding: $pad-h $pad-w;
+      position: relative;
+
+      &::before {
+        border-left: 1rem solid transparent;
+        border-right: 1rem solid transparent;
+        content: '';
+        border-bottom: 1rem solid $color-white;
+        position: absolute;
+        top: -1rem;
+      }
+
+      a {
+        color: $color-shark;
+        text-decoration: underline;
+      }
     }
   }
 }

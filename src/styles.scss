@@ -14,7 +14,7 @@ h4,
 p {
   font-weight: normal;
   line-height: 1.25em;
-  margin: 0 0 1rem;
+  margin: 0 0 .5rem;
 }
 
 p:last-of-type {
@@ -39,6 +39,7 @@ button,
 input[type='submit'] {
   background-color: $color-white;
   color: $color-black;
+  cursor: pointer;
 }
 
 input,

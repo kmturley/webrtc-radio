@@ -1,73 +1,81 @@
-<div class="station" *ngIf="radio.station && (!create && !edit)">
-  <div class="section details">
-    <p>Listening to</p>
-    <h2>{{ radio.station.name || radio.station.id }}</h2>
-    <a routerLink="/stations" class="details-back">
-      <img src="../../assets/icons/back.svg" alt="Back" />
-      back
-    </a>
-    <button class="button details-edit" routerLink="." [queryParams]="{edit: true}">Edit</button>
-    <!-- <h3>{{ radio.station.broadcasting ? 'Online' : 'Offline' }}</h3> -->
-    <div class="details-bar">
-      <a class="details-owner" routerLink="/listeners/{{ radio.station.owner.id }}">
-        <img src="../../assets/icons/mic.svg" alt="Owner" />
-        {{ radio.station.owner.name || radio.station.owner.id }}
-        <span *ngIf="radio.station.owner.id == radio.socket.id"> (you)</span>
+<div *ngIf="radio.station">
+  <div class="station" *ngIf="!create && !edit">
+    <div class="section details">
+      <p>Listening to</p>
+      <h2>{{ radio.station.name || radio.station.id }}</h2>
+      <a routerLink="/stations" class="details-back">
+        <img src="../../assets/icons/back.svg" alt="Back" />
+        back
       </a>
-      <div class="details-listeners">
-        <img src="../../assets/icons/listen.svg" alt="Listeners" />
-        {{ (radio.station.listeners | keyvalue).length }} listener<span *ngIf="(radio.station.listeners | keyvalue).length != 1">s</span>
+      <button class="button details-edit" routerLink="." [queryParams]="{edit: true}">Edit</button>
+      <!-- <h3>{{ radio.station.broadcasting ? 'Online' : 'Offline' }}</h3> -->
+      <div class="details-bar">
+        <a class="details-owner" routerLink="/listeners/{{ radio.station.owner.id }}">
+          <img src="../../assets/icons/mic.svg" alt="Owner" />
+          {{ radio.station.owner.name || radio.station.owner.id }}
+          <span *ngIf="radio.station.owner.id == radio.socket.id"> (you)</span>
+        </a>
+        <div class="details-listeners">
+          <img src="../../assets/icons/listen.svg" alt="Listeners" />
+          {{ (radio.station.listeners | keyvalue).length }} listener<span *ngIf="(radio.station.listeners | keyvalue).length != 1">s</span>
+        </div>
+      </div>
+    </div>
+    <div class="visual">
+      <img src="../../assets/images/visual.jpg" alt="Visual" />
+    </div>
+    <div class="controls" *ngIf="radio.station.owner.id == radio.socket.id">
+      <div class="section">
+        <button class="start" (click)="start()" *ngIf="!radio.station.broadcasting">Start</button>
+        <button class="stop" (click)="stop()" *ngIf="radio.station.broadcasting">Stop</button>
+      </div>
+    </div>
+    <div class="controls" *ngIf="radio.station.owner.id != radio.socket.id">
+      <div class="section">
+        <button class="play" (click)="play()" *ngIf="!radio.station.playing">Play</button>
+        <button class="stop" (click)="stop()" *ngIf="radio.station.playing">Stop</button>
       </div>
     </div>
   </div>
-  <div class="visual">
-    <img src="../../assets/images/visual.jpg" alt="Visual" />
-  </div>
-  <div class="controls" *ngIf="radio.station.owner.id == radio.socket.id">
-    <div class="section">
-      <button class="start" (click)="start()" *ngIf="!radio.station.broadcasting">Start</button>
-      <button class="stop" (click)="stop()" *ngIf="radio.station.broadcasting">Stop</button>
-    </div>
-  </div>
-  <div class="controls" *ngIf="radio.station.owner.id != radio.socket.id">
-    <div class="section">
-      <button class="play" (click)="play()" *ngIf="!radio.station.playing">Play</button>
-      <button class="stop" (click)="stop()" *ngIf="radio.station.playing">Stop</button>
+  <div *ngIf="create || edit">
+    <div class="section station-edit">
+      <h1 *ngIf="create">Create station</h1>
+      <h1 *ngIf="edit">Edit station</h1>
+      <form>
+        <div class="input">
+          <label for="name">Name:</label>
+          <input id="name" name="name" type="text" [(ngModel)]="radio.station.name" />
+        </div>
+        <!-- <div class="input">
+          <label for="image">Image:</label>
+          <input id="image" name="image" type="file" />
+        </div> -->
+        <div class="input">
+          <label for="audioInput">Audio input:</label>
+          <select id="audioInput" name="audioInput">
+            <option *ngFor="let device of devicesIn" [value]="device.deviceId" [selected]="device.deviceId == 'default'">{{ device.label }}</option>
+          </select>
+        </div>
+        <div class="input">
+            <label for="audioOutput">Audio output:</label>
+            <select id="audioOutput" name="audioOutput">
+              <option *ngFor="let device of devicesOut" [value]="device.deviceId" [selected]="device.deviceId == 'default'">{{ device.label }}</option>
+            </select>
+            <div class="message">
+              <h3>Select valid line-in/out audio source here.</h3>
+              <p>If you do not have an audio line-in, then install <a href="https://support.shinywhitebox.com/hc/en-us/articles/204161459-Installing-iShowU-Audio-Capture-Mojave-and-earlier-" target="_blank">iShowU Audio Capture</a> and <strong>map both input and output to iShowU Audio Capture</strong>.</p>
+            </div>
+          </div>
+        <div class="input input-submit">
+          <button class="button" routerLink="." [queryParams]="{}">Create</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
-<div *ngIf="!radio.station && (!create && !edit)">
+<div *ngIf="!radio.station">
   <div class="section details">
     <h2>Station not found</h2>
     <a routerLink="/">View full station list</a>
-  </div>
-</div>
-<div *ngIf="radio.station && (create || edit)">
-  <div class="section station-edit">
-    <h1 *ngIf="create">Create station</h1>
-    <h1 *ngIf="edit">Edit station</h1>
-    <form>
-      <div class="input">
-        <label for="name">Name:</label>
-        <input id="name" name="name" type="text" [(ngModel)]="radio.station.name" />
-      </div>
-      <div class="input">
-        <label for="image">Image:</label>
-        <input id="image" name="image" type="file" />
-      </div>
-      <div class="input">
-        <label for="audio">Audio input:</label>
-        <select>
-          <option value="1">Internal Microphone</option>
-        </select>
-        <div class="message">
-          <h3>Select a valid line-in audio source here.</h3>
-          <p>If you do not have an audio line-in, then install iShowU Audio Capture and map both your input and output channels using this guide.</p>
-        </div>
-      </div>
-      <div class="input input-submit">
-        <button class="button" routerLink="." [queryParams]="{}">Create</button>
-      </div>
-    </form>
   </div>
 </div>

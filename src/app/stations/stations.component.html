@@ -1,7 +1,7 @@
 <div class="section stations">
   <div class="stations-list">
-    <a routerLink="/stations/{{ station.key }}" class="station" *ngFor="let station of radio.stations | keyvalue">
-      <span class="station-name">{{ station.key }}</span>
+    <a routerLink="/stations/{{ station.value.id }}" class="station" *ngFor="let station of radio.stations | keyvalue">
+      <span class="station-name">{{ station.value.name || station.value.id }}</span>
       <span class="station-listeners"><img src="../../assets/icons/listen.svg" alt="Listeners" />{{ (station.value.listeners | keyvalue).length }} listeners</span>
       <img src="../../assets/icons/play.svg" alt="Play" class="station-play" />
     </a>
