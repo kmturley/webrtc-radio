@@ -52,20 +52,15 @@
         </div> -->
         <div class="input">
           <label for="audioInput">Audio input:</label>
-          <select id="audioInput" name="audioInput">
-            <option *ngFor="let device of devicesIn" [value]="device.deviceId" [selected]="device.deviceId == 'default'">{{ device.label }}</option>
+          <select id="audioInput" name="audioInput" (change)="onChange($event.target.value)">
+            <option *ngFor="let device of devicesIn" [value]="device.deviceId" [selected]="device.deviceId == deviceId">{{ device.label }}</option>
           </select>
-        </div>
-        <div class="input">
-            <label for="audioOutput">Audio output:</label>
-            <select id="audioOutput" name="audioOutput">
-              <option *ngFor="let device of devicesOut" [value]="device.deviceId" [selected]="device.deviceId == 'default'">{{ device.label }}</option>
-            </select>
-            <div class="message">
-              <h3>Select valid line-in/out audio source here.</h3>
-              <p>If you do not have an audio line-in, then install <a href="https://support.shinywhitebox.com/hc/en-us/articles/204161459-Installing-iShowU-Audio-Capture-Mojave-and-earlier-" target="_blank">iShowU Audio Capture</a> and <strong>map both input and output to iShowU Audio Capture</strong>.</p>
-            </div>
+          <div class="message">
+            <h3>Select a valid line-in audio source here.</h3>
+            <p>If you do not have an audio line-in, then install <a href="https://support.shinywhitebox.com/hc/en-us/articles/204161459-Installing-iShowU-Audio-Capture-Mojave-and-earlier-" target="_blank">iShowU Audio Capture</a> and <strong>map both input and output (in your Computer Sound Settings) to iShowU Audio Capture</strong>.</p>
+            <img src="../../assets/images/sound-settings.png" alt="Sound settings" />
           </div>
+        </div>
         <div class="input input-submit">
           <button class="button" routerLink="." [queryParams]="{}">Create</button>
         </div>

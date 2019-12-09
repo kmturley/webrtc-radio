@@ -13,8 +13,8 @@ import { StationService } from '../shared/services/station.service';
 export class StationComponent implements OnDestroy, OnInit {
   create = false;
   edit = false;
+  deviceId: string;
   devicesIn = [];
-  devicesOut = [];
   myStation: StationService;
   stationId: string;
 
@@ -42,20 +42,25 @@ export class StationComponent implements OnDestroy, OnInit {
 
   getDevices() {
     this.devicesIn = [];
-    this.devicesOut = [];
     navigator.mediaDevices.enumerateDevices().then((devices) => {
       devices.forEach((device) => {
         if (device.kind === 'audioinput') {
           this.devicesIn.push(device);
-        } else if (device.kind === 'audiooutput') {
-          this.devicesOut.push(device);
+        }
+        if (device.label === 'iShowU Audio Capture') {
+          this.deviceId = device.deviceId;
         }
       });
     });
   }
 
+  onChange(deviceId: string) {
+    console.log('onChange', deviceId);
+    this.deviceId = deviceId;
+  }
+
   async start() {
-    this.myStation = new StationService(this.radio.context, this.radio.outgoing);
+    this.myStation = new StationService(this.radio.context, this.radio.outgoing, this.deviceId);
     await this.myStation.start();
     this.radio.start(this.stationId);
   }
