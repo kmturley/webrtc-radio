@@ -10,7 +10,7 @@ import { RadioService } from '../shared/services/radio.service';
   styleUrls: ['./stations.component.scss']
 })
 export class StationsComponent implements OnInit {
-  inputMessage = 'test';
+  inputMessage = 'House';
 
   constructor(
     public radio: RadioService,

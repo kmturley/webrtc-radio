@@ -1,2 +1,2 @@
-<app-nav></app-nav>
+<app-nav *ngIf="!currentUrl.startsWith('/stations/')"></app-nav>
 <router-outlet></router-outlet>

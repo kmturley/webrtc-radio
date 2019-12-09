@@ -1,0 +1,51 @@
+@import '../shared/variables.scss';
+
+.station {
+  background-color: $color-black;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
+}
+
+.details {
+  box-sizing: border-box;
+  text-align: center;
+  width: 100%;
+
+  p {
+    margin-bottom: .25rem;
+  }
+
+  h2 {
+    font-size: 32px;
+  }
+
+  &-back {
+    left: $pad-w;
+    position: absolute;
+    top: $pad-h;
+
+    img {
+      vertical-align: middle;
+    }
+  }
+
+  &-bar {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+.visual {
+  text-align: center;
+
+  img {
+    max-width: 100%;
+  }
+}
+
+.controls {
+  background-color: $color-ebony-clay;
+  width: 100%;
+}

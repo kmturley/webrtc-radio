@@ -2,13 +2,7 @@
 
 :host {
   background-color: $color-ebony-clay;
-  box-sizing: border-box;
-  left: 0;
-  position: fixed;
-  text-align: center;
-  top: 0;
-  width: 100%;
-  z-index: 3;
+  display: block;
 }
 
 .head {
@@ -19,6 +13,7 @@
   justify-content: center;
   flex-direction: column;
   font-size: 32px;
+  text-align: center;
 
   .logo {
     margin-bottom: 1rem;
@@ -27,6 +22,9 @@
 
 .menu {
   padding: $pad-h 0 0;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 
   ul {
     display: flex;

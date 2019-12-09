@@ -1,21 +1,43 @@
-<div class="section" *ngIf="radio.station">
-  <h2>Station: {{ radio.station.id }}</h2>
-  <p>Owner: {{ radio.station.owner.name || radio.station.owner.id }}<span *ngIf="radio.station.owner.id == radio.socket.id"> (you)</span></p>
-  <div *ngIf="radio.station.owner.id == radio.socket.id">
-    <button class="start" (click)="start()" *ngIf="!radio.station.broadcasting">Start broadcast</button>
-    <button class="stop" (click)="stop()" *ngIf="radio.station.broadcasting">Stop broadcast</button>
-  </div>
-  <h3 class="info">{{ radio.station.broadcasting ? 'Online' : 'Offline' }}</h3>
-  <p>Listeners ({{ (radio.station.listeners | keyvalue).length }})</p>
-  <ul>
-    <li *ngFor="let listener of radio.station.listeners | keyvalue">
-      <a routerLink="/listeners/{{ listener.key }}">
-        {{ radio.station.listeners[listener.key].name || radio.station.listeners[listener.key].id }}<span *ngIf="listener.key == radio.socket.id"> (you)</span>
+<div class="station" *ngIf="radio.station">
+  <div class="section details">
+    <p>Listening to</p>
+    <h2>{{ radio.station.id }}</h2>
+    <a routerLink="/stations" class="details-back">
+      <img src="../../assets/icons/back.svg" alt="Back" />
+      back
+    </a>
+    <!-- <h3>{{ radio.station.broadcasting ? 'Online' : 'Offline' }}</h3> -->
+    <div class="details-bar">
+      <a class="details-owner" routerLink="/listeners/{{ radio.station.owner.id }}">
+        <img src="../../assets/icons/mic.svg" alt="Owner" />
+        {{ radio.station.owner.name || radio.station.owner.id }}
+        <span *ngIf="radio.station.owner.id == radio.socket.id"> (you)</span>
       </a>
-    </li>
-  </ul>
+      <div class="details-listeners">
+        <img src="../../assets/icons/listen.svg" alt="Listeners" />
+        {{ (radio.station.listeners | keyvalue).length }} listener<span *ngIf="(radio.station.listeners | keyvalue).length != 1">s</span>
+      </div>
+    </div>
+  </div>
+  <div class="visual">
+    <img src="../../assets/images/visual.jpg" alt="Visual" />
+  </div>
+  <div class="controls" *ngIf="radio.station.owner.id == radio.socket.id">
+    <div class="section">
+      <button class="start" (click)="start()" *ngIf="!radio.station.broadcasting">Start</button>
+      <button class="stop" (click)="stop()" *ngIf="radio.station.broadcasting">Stop</button>
+    </div>
+  </div>
+  <div class="controls" *ngIf="radio.station.owner.id != radio.socket.id">
+    <div class="section">
+      <button class="play" (click)="play()" *ngIf="!radio.station.playing">Play</button>
+      <button class="stop" (click)="stop()" *ngIf="radio.station.playing">Stop</button>
+    </div>
+  </div>
 </div>
-<div class="section" *ngIf="!radio.station">
-  <h2>Station not found</h2>
-  <a routerLink="/">View full station list</a>
+<div class="station" *ngIf="!radio.station">
+  <div class="section details">
+    <h2>Station not found</h2>
+    <a routerLink="/">View full station list</a>
+  </div>
 </div>
