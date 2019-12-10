@@ -139,6 +139,11 @@ export class StationComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
-    this.leave();
+    if (this.myStation) {
+      this.stop();
+    }
+    if (this.radio) {
+      this.leave();
+    }
   }
 }

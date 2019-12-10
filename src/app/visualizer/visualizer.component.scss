@@ -1,3 +1,7 @@
+:host {
+  flex: 1;
+}
+
 canvas {
-  width: 100%;
+  display: block;
 }
