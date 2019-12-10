@@ -16,9 +16,12 @@ export class StationComponent implements OnDestroy, OnInit {
   edit = false;
   deviceId: string;
   devicesIn = [];
+  interval: NodeJS.Timer;
   myListener: ListenerService;
   myStation: StationService;
   stationId: string;
+  timeEnd = '';
+  timeStart = '';
 
   constructor(
     public radio: RadioService,
@@ -78,16 +81,19 @@ export class StationComponent implements OnDestroy, OnInit {
     this.myStation = new StationService(this.radio.context, this.radio.outgoing, this.deviceId);
     await this.myStation.start();
     this.radio.start(this.stationId);
+    this.startTimer();
   }
 
   stop() {
     this.myStation.stop();
     this.myStation = null;
     this.radio.stop(this.stationId);
+    this.stopTimer();
   }
 
   join() {
     this.radio.join(this.stationId);
+    this.startTimer();
   }
 
   leave() {
@@ -95,6 +101,47 @@ export class StationComponent implements OnDestroy, OnInit {
       this.myListener.disconnect();
     }
     this.radio.leave(this.stationId);
+    this.stopTimer();
+  }
+
+  startTimer() {
+    this.updateTimer();
+    this.interval = setInterval(() => {
+      this.updateTimer();
+    }, 1000);
+  }
+
+  updateTimer() {
+    const playTime = this.radio.stations[this.stationId].time;
+    if (playTime) {
+      const currentTime = new Date().getTime();
+      this.timeEnd = 'Live';
+      this.timeStart = this.convertTime(currentTime - playTime);
+    } else {
+      this.timeEnd = 'Offline';
+      this.timeStart = '00:00:00';
+    }
+  }
+
+  stopTimer() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+    this.timeEnd = '';
+    this.timeStart = '';
+  }
+
+  convertTime(s: number) {
+    function pad(n) {
+      return ('00' + n).slice(-2);
+    }
+    const ms = s % 1000;
+    s = (s - ms) / 1000;
+    const secs = s % 60;
+    s = (s - secs) / 60;
+    const mins = s % 60;
+    const hrs = (s - mins) / 60;
+    return pad(hrs) + ':' + pad(mins) + ':' + pad(secs);
   }
 
   ngOnDestroy() {

@@ -92,6 +92,7 @@ function handleSockets(socket) {
         listeners: {},
         name: stationName,
         owner: listeners[socket.id],
+        time: 0
       };
       socket.emit('added', stationId);
       io.emit('stations.updated', stations);
@@ -147,6 +148,7 @@ function handleSockets(socket) {
   socket.on('start', (stationId) => {
     if (exists(stationId) && isOwner(stationId, socket)) {
       stations[stationId].broadcasting = true;
+      stations[stationId].time = new Date().getTime();
       socket.emit('started', stationId);
       io.emit('stations.updated', stations);
     }
@@ -156,6 +158,7 @@ function handleSockets(socket) {
   socket.on('stop', (stationId) => {
     if (exists(stationId) && isOwner(stationId, socket)) {
       stations[stationId].broadcasting = false;
+      stations[stationId].time = 0;
       socket.emit('stopped', stationId);
       io.emit('stations.updated', stations);
     }

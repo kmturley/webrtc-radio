@@ -8,7 +8,7 @@
         <img src="../../assets/icons/back.svg" alt="Back" />
         back
       </a>
-      <button class="button details-edit" routerLink="." [queryParams]="{edit: true}">Edit</button>
+      <button class="button details-edit" routerLink="." [queryParams]="{edit: true}" *ngIf="isOwner()">Edit</button>
       <!-- <h3>{{ radio.stations[stationId].broadcasting ? 'Online' : 'Offline' }}</h3> -->
       <div class="details-bar">
         <a class="details-owner" routerLink="/listeners/{{ radio.stations[stationId].owner.id }}">
@@ -25,8 +25,17 @@
     <div class="visual">
       <img src="../../assets/images/visual.jpg" alt="Visual" />
     </div>
-    <div class="controls" *ngIf="isOwner()">
+    <div class="controls">
       <div class="section">
+        <div class="timeline">
+          <div class="progress" *ngIf="(myListener && myListener.playing) || radio.stations[stationId].broadcasting"></div>
+          <div class="labels">
+            <span class="start">{{ timeStart }}</span>
+            <span class="end">{{ timeEnd }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="section" *ngIf="isOwner()">
         <button class="control start" (click)="start()" *ngIf="!radio.stations[stationId].broadcasting">
           <img src="../../assets/icons/play.svg" alt="Play" />
         </button>
@@ -34,9 +43,7 @@
           <img src="../../assets/icons/stop.svg" alt="Stop" />
         </button>
       </div>
-    </div>
-    <div class="controls" *ngIf="!isOwner()">
-      <div class="section">
+      <div class="section" *ngIf="!isOwner()">
         <button class="control play" (click)="join()" *ngIf="!myListener || !myListener.playing">
           <img src="../../assets/icons/play.svg" alt="Play" />
         </button>
