@@ -16,8 +16,7 @@ export class StationComponent implements OnDestroy, OnInit {
   edit = false;
   deviceId: string;
   devicesIn = [];
-  interval: NodeJS.Timer;
-  myListener: ListenerService;
+  interval: any;
   myStation: StationService;
   stationId: string;
   timeEnd = '';
@@ -29,8 +28,7 @@ export class StationComponent implements OnDestroy, OnInit {
     private router: Router,
   ) {
     this.radio.newListener = (id: string, radioService: any, audioContext: AudioContext, incomingMedia: GainNode) => {
-      this.myListener = new ListenerService(id, radioService, audioContext, incomingMedia);
-      return this.myListener;
+      return new ListenerService(id, radioService, audioContext, incomingMedia);
     };
   }
 
@@ -43,7 +41,6 @@ export class StationComponent implements OnDestroy, OnInit {
       this.stationId = params.id;
     });
     this.getDevices();
-    console.log('StationComponent', this.radio);
   }
 
   isOwner() {
@@ -97,9 +94,6 @@ export class StationComponent implements OnDestroy, OnInit {
   }
 
   leave() {
-    if (this.myListener) {
-      this.myListener.disconnect();
-    }
     this.radio.leave(this.stationId);
     this.stopTimer();
   }

@@ -11,6 +11,7 @@ import { StationsComponent } from './stations/stations.component';
 import { NavComponent } from './nav/nav.component';
 import { ListenersComponent } from './listeners/listeners.component';
 import { ListenerComponent } from './listener/listener.component';
+import { VisualizerComponent } from './visualizer/visualizer.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { ListenerComponent } from './listener/listener.component';
     StationsComponent,
     NavComponent,
     ListenersComponent,
-    ListenerComponent
+    ListenerComponent,
+    VisualizerComponent
   ],
   imports: [
     BrowserModule,

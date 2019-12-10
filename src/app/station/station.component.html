@@ -22,13 +22,11 @@
         </div>
       </div>
     </div>
-    <div class="visual">
-      <img src="../../assets/images/visual.jpg" alt="Visual" />
-    </div>
+    <app-visualizer [station]="myStation"></app-visualizer>
     <div class="controls">
       <div class="section">
         <div class="timeline">
-          <div class="progress" *ngIf="(myListener && myListener.playing) || radio.stations[stationId].broadcasting"></div>
+          <div class="progress" *ngIf="radio.stations[stationId].broadcasting"></div>
           <div class="labels">
             <span class="start">{{ timeStart }}</span>
             <span class="end">{{ timeEnd }}</span>
@@ -44,10 +42,10 @@
         </button>
       </div>
       <div class="section" *ngIf="!isOwner()">
-        <button class="control play" (click)="join()" *ngIf="!myListener || !myListener.playing">
+        <button class="control play" (click)="join()" *ngIf="!radio.station">
           <img src="../../assets/icons/play.svg" alt="Play" />
         </button>
-        <button class="control stop" (click)="leave()" *ngIf="myListener && myListener.playing">
+        <button class="control stop" (click)="leave()" *ngIf="radio.station">
           <img src="../../assets/icons/stop.svg" alt="Stop" />
         </button>
       </div>

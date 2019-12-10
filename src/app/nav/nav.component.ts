@@ -23,7 +23,6 @@ export class NavComponent implements OnInit {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.currentUrl = event.urlAfterRedirects;
-        console.log('currentUrl', this.currentUrl);
       }
     });
   }

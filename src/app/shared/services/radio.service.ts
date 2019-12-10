@@ -23,7 +23,6 @@ export class RadioService {
   port = 8080 || window.location.port;
   station: StationModel;
   stations = {};
-  stationsJoined = [];
 
   constructor() {
     console.log('Radio.init');
