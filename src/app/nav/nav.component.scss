@@ -19,7 +19,8 @@
   background-color: $color-ebony-clay;
   display: flex;
   justify-content: space-between;
-  padding: 0;
+  padding-bottom: 0;
+  padding-top: 0;
   position: sticky;
   top: 0;
   z-index: 2;
@@ -34,7 +35,7 @@
   a {
     display: inline-block;
     padding: $pad-h 0;
-    margin: 0 $pad-w;
+    margin: 0 $pad-w 0 0;
   
     &.active {
       border-bottom: 4px solid $color-white;

@@ -1,5 +1,6 @@
 import { ActivatedRoute } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { ListenerService } from '../shared/services/listener.service';
 import { RadioService } from '../shared/services/radio.service';
@@ -15,15 +16,18 @@ export class StationComponent implements OnDestroy, OnInit {
   edit = false;
   deviceId: string;
   devicesIn = [];
+  myListener: ListenerService;
   myStation: StationService;
   stationId: string;
 
   constructor(
     public radio: RadioService,
     private route: ActivatedRoute,
+    private router: Router,
   ) {
     this.radio.newListener = (id: string, radioService: any, audioContext: AudioContext, incomingMedia: GainNode) => {
-      return new ListenerService(id, radioService, audioContext, incomingMedia);
+      this.myListener = new ListenerService(id, radioService, audioContext, incomingMedia);
+      return this.myListener;
     };
   }
 
@@ -34,10 +38,16 @@ export class StationComponent implements OnDestroy, OnInit {
     });
     this.route.params.subscribe((params) => {
       this.stationId = params.id;
-      this.radio.join(this.stationId);
     });
     this.getDevices();
     console.log('StationComponent', this.radio);
+  }
+
+  isOwner() {
+    if (this.radio.stations[this.stationId]) {
+      return this.radio.stations[this.stationId].owner.id === this.radio.socket.id;
+    }
+    return false;
   }
 
   getDevices() {
@@ -59,6 +69,11 @@ export class StationComponent implements OnDestroy, OnInit {
     this.deviceId = deviceId;
   }
 
+  save(stationName: string) {
+    this.radio.update(this.stationId, stationName);
+    this.router.navigate([], { queryParams: {} });
+  }
+
   async start() {
     this.myStation = new StationService(this.radio.context, this.radio.outgoing, this.deviceId);
     await this.myStation.start();
@@ -71,7 +86,18 @@ export class StationComponent implements OnDestroy, OnInit {
     this.radio.stop(this.stationId);
   }
 
-  ngOnDestroy() {
+  join() {
+    this.radio.join(this.stationId);
+  }
+
+  leave() {
+    if (this.myListener) {
+      this.myListener.disconnect();
+    }
     this.radio.leave(this.stationId);
+  }
+
+  ngOnDestroy() {
+    this.leave();
   }
 }

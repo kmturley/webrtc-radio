@@ -1,5 +1,10 @@
 @import './app/shared/variables.scss';
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   background-color: $color-shark;
   color: $color-white;
@@ -22,6 +27,7 @@ button,
 input,
 select {
   appearance: none;
+  border: 0;
   border-radius: .25rem;
   box-sizing: border-box;
   font-family: sans-serif;

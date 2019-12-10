@@ -109,6 +109,16 @@ function handleSockets(socket) {
     }
   });
 
+  // update a station
+  socket.on('update', (stationId, stationName) => {
+    if (exists(stationId) && isOwner(stationId, socket)) {
+      console.log('update', stationId);
+      stations[stationId].name = stationName;
+      socket.emit('updated', stationId);
+      io.emit('stations.updated', stations);
+    }
+  });
+
   // join a station
   socket.on('join', (stationId) => {
     if (exists(stationId)) {
