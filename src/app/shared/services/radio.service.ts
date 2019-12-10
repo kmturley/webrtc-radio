@@ -23,7 +23,6 @@ export class RadioService {
   port = 8080 || window.location.port;
   station: StationModel;
   stations = {};
-  stationsJoined = [];
 
   constructor() {
     console.log('Radio.init');
@@ -47,8 +46,12 @@ export class RadioService {
       }
     });
 
+    this.socket.on('added', (stationId: string) => {
+      this.join(stationId);
+    });
+
     this.socket.on('joined', (stationId: string) => {
-      console.log('Radio.joined', stationId);
+      console.log('Radio.joined', stationId, this.stations[stationId]);
       this.station = this.stations[stationId];
     });
 
@@ -143,9 +146,14 @@ export class RadioService {
     console.log('newListener', id, radio, audioContext, incomingMedia);
   }
 
-  add(stationId: string) {
-    console.log('Radio.add', stationId);
-    this.socket.emit('add', stationId);
+  add(stationId: string, stationName: string) {
+    console.log('Radio.add', stationId, stationName);
+    this.socket.emit('add', stationId, stationName);
+  }
+
+  update(stationId: string, stationName: string) {
+    console.log('Radio.update', stationId, stationName);
+    this.socket.emit('update', stationId, stationName);
   }
 
   remove(stationId: string) {

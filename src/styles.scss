@@ -1,5 +1,10 @@
 @import './app/shared/variables.scss';
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   background-color: $color-shark;
   color: $color-white;
@@ -13,20 +18,37 @@ h3,
 h4,
 p {
   font-weight: normal;
-  margin: 0 0 1rem;
+  line-height: 1.25em;
+  margin: 0 0 .5rem;
 }
 
+.button,
 button,
 input,
 select {
-  background-color: $color-mine-shaft;
-  border: 2px solid $color-white;
+  appearance: none;
+  border: 0;
   border-radius: .25rem;
-  color: $color-white;
+  box-sizing: border-box;
   font-family: sans-serif;
   font-size: 1rem;
-  margin-right: .5rem;
+  font-weight: bold;
   padding: $pad-h / 2 $pad-w / 2;
+}
+
+.button,
+button,
+input[type='submit'] {
+  background-color: $color-white;
+  color: $color-black;
+  cursor: pointer;
+}
+
+input,
+select {
+  background-color: transparent;
+  border: 1px solid $color-shuttle-grey;
+  color: $color-white;
 }
 
 a {
@@ -36,10 +58,6 @@ a {
 
 .section {
   margin: 0 auto;
-  max-width: $width-md;
+  max-width: $width-xs;
   padding: $pad-h $pad-w;
-
-  &:first-of-type {
-    margin-top: $pad-h * 4;
-  }
 }

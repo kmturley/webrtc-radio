@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { SlugifyPipe } from 'angular-pipes';
-import { Router } from '@angular/router';
 
 import { RadioService } from '../shared/services/radio.service';
 
@@ -10,20 +8,11 @@ import { RadioService } from '../shared/services/radio.service';
   styleUrls: ['./stations.component.scss']
 })
 export class StationsComponent implements OnInit {
-  inputMessage = 'test';
 
   constructor(
-    public radio: RadioService,
-    private router: Router,
-    private slugifyPipe: SlugifyPipe
+    public radio: RadioService
   ) { }
 
   ngOnInit() {
-  }
-
-  async create(input: string) {
-    const stationId = this.slugifyPipe.transform(input);
-    this.radio.add(stationId);
-    this.router.navigate([`/stations/${stationId}`]);
   }
 }

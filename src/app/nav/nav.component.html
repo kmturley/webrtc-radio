@@ -1,15 +1,17 @@
-<div class="nav">
-  <div class="logo">
-    <img src="../../assets/radio.svg" alt="Radio" class="radio" />
-    Radio
-  </div>
+<div class="head">
+  <img src="../../assets/icons/logo.svg" alt="WebRTC Radio" class="logo" />
+  <span class="title">WebRTC <strong>Radio</strong></span>
+  <a routerLink="/listeners/{{ radio.socket.id }}" class="user">
+    <img src="../../assets/icons/profile.svg" alt="My profile" class="profile" />
+  </a>
+</div>
+<div class="section menu">
   <ul>
     <li><a routerLink="/stations" [ngClass]="{'active': isActive('/stations')}">Stations</a></li>
     <li><a routerLink="/listeners" [ngClass]="{'active': isActive('/listeners')}">Listeners</a></li>
   </ul>
-</div>
-<div class="user">
-  <a routerLink="/listeners/{{ radio.socket.id }}">
-    <img src="../../assets/profile.svg" alt="My profile" class="profile" />
-  </a>
+  <div class="menu-create">
+    <input type="text" [(ngModel)]="inputMessage" />
+    <button class="create" (click)="create(inputMessage)">Create</button>
+  </div>
 </div>

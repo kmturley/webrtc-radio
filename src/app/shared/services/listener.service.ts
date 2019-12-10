@@ -17,6 +17,7 @@ export class ListenerService {
   audioElem: HTMLAudioElement;
   audioNode: MediaStreamAudioSourceNode;
   gainNode: GainNode;
+  playing = false;
 
   constructor(id: string, radio: any, audioContext: AudioContext, incomingMedia: GainNode) {
     console.log('Listener.init', id, radio, audioContext, incomingMedia);
@@ -42,8 +43,7 @@ export class ListenerService {
       console.log('Listener.datachannel', event.channel.label, this.id);
       this.recvChannel = event.channel;
       this.recvChannel.addEventListener('message', (msg: any) => {
-        console.log('Listener.message', this.id);
-        console.dir(JSON.parse(msg.data));
+        console.log('Listener.message', this.id, JSON.parse(msg.data));
       });
       this.sendChannel.send(JSON.stringify({type: 'msg', contents: 'hello'}));
     });
@@ -67,9 +67,12 @@ export class ListenerService {
     console.log('Listener.disconnect', this.id);
     this.conn.close();
     this.sendChannel.close();
-    this.recvChannel.close();
+    if (this.recvChannel) {
+      this.recvChannel.close();
+    }
     this.cleanup();
     this.radio.disconnect(this.id);
+    this.playing = false;
   }
 
   handleIceCandidates(event: any) {
@@ -117,6 +120,7 @@ export class ListenerService {
       this.audioNode = this.audioContext.createMediaStreamSource(remoteStream);
       this.audioNode.connect(this.gainNode);
       this.audioContext.resume();
+      this.playing = true;
     }
   }
 }

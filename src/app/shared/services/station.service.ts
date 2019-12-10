@@ -10,6 +10,9 @@ export class StationService {
     audio: {
       autoGainControl: false,
       channelCount: 2,
+      deviceId: {
+        exact: undefined
+      },
       echoCancellation: false,
       latency: 0,
       noiseSuppression: false,
@@ -21,8 +24,9 @@ export class StationService {
   mySource: MediaStreamAudioSourceNode;
   outgoingGain: GainNode;
 
-  constructor(context: AudioContext, outgoingDestNode: MediaStreamAudioDestinationNode) {
-    console.log('Station.init', context, outgoingDestNode);
+  constructor(context: AudioContext, outgoingDestNode: MediaStreamAudioDestinationNode, deviceId: string) {
+    console.log('Station.init', context, outgoingDestNode, deviceId);
+    this.constraints.audio.deviceId.exact = deviceId;
     this.context = context;
     this.outgoingGain = this.context.createGain();
     this.outgoingGain.connect(outgoingDestNode);
