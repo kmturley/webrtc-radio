@@ -51,7 +51,7 @@ export class RadioService {
     });
 
     this.socket.on('joined', (stationId: string) => {
-      console.log('Radio.joined', stationId);
+      console.log('Radio.joined', stationId, this.stations[stationId]);
       this.station = this.stations[stationId];
     });
 

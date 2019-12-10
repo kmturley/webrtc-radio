@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
 
 import { ListenerService } from '../shared/services/listener.service';
 import { RadioService } from '../shared/services/radio.service';
@@ -9,7 +9,7 @@ import { StationService } from '../shared/services/station.service';
   templateUrl: './visualizer.component.html',
   styleUrls: ['./visualizer.component.scss']
 })
-export class VisualizerComponent implements OnInit {
+export class VisualizerComponent implements AfterViewInit {
   analyzerNode: AnalyserNode;
   context: AudioContext;
   myStation: StationService;
@@ -21,8 +21,8 @@ export class VisualizerComponent implements OnInit {
   @Input() set station(station: StationService) {
     if (station) {
       this.myStation = station;
+      this.myStation.outgoingGain.connect(this.analyzerNode);
       console.log('station', station);
-      this.initVizualizer();
     }
   }
 
@@ -32,10 +32,7 @@ export class VisualizerComponent implements OnInit {
     public radio: RadioService
   ) { }
 
-  ngOnInit() { }
-
-  initVizualizer() {
-    console.log('initVizualizer', this);
+  ngAfterViewInit() {
     this.analyzerNode = this.radio.context.createAnalyser();
     this.analyzerNode.smoothingTimeConstant = 0.6;
     this.analyzerNode.fftSize = 2048;
@@ -47,7 +44,6 @@ export class VisualizerComponent implements OnInit {
     });
     this.vizCtx = this.visualizerCanvas.nativeElement.getContext('2d');
     this.radio.incoming.connect(this.analyzerNode);
-    this.myStation.outgoingGain.connect(this.analyzerNode);
   }
 
   updateVizualizer() {
@@ -55,7 +51,7 @@ export class VisualizerComponent implements OnInit {
       this.analyzerNode.getByteFrequencyData(this.vizFreqDomainData);
       const width = this.visualizerCanvas.nativeElement.clientWidth;
       const height = this.visualizerCanvas.nativeElement.clientHeight;
-      const barWidth = (width / (this.analyzerNode.frequencyBinCount / 9.3)); // Estimation for now
+      const barWidth = (width / (this.analyzerNode.frequencyBinCount / 9.3));
       this.vizCtx.clearRect(0, 0, width, height);
       this.vizCtx.fillStyle = 'black';
       this.vizCtx.fillRect(0, 0, width, height);
@@ -67,7 +63,6 @@ export class VisualizerComponent implements OnInit {
       const t = 1;
       let next = 1;
       for (let i = 0; i < this.analyzerNode.frequencyBinCount; i += next) {
-          // Rounding doesn't go so well...
           next += i / (this.analyzerNode.frequencyBinCount / 16);
           next = next - (next % 1);
           if (this.vizualizerOpt === 'bar') {

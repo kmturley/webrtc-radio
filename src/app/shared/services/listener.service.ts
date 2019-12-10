@@ -43,8 +43,7 @@ export class ListenerService {
       console.log('Listener.datachannel', event.channel.label, this.id);
       this.recvChannel = event.channel;
       this.recvChannel.addEventListener('message', (msg: any) => {
-        console.log('Listener.message', this.id);
-        console.dir(JSON.parse(msg.data));
+        console.log('Listener.message', this.id, JSON.parse(msg.data));
       });
       this.sendChannel.send(JSON.stringify({type: 'msg', contents: 'hello'}));
     });
