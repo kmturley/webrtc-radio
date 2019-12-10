@@ -68,7 +68,9 @@ export class ListenerService {
     console.log('Listener.disconnect', this.id);
     this.conn.close();
     this.sendChannel.close();
-    this.recvChannel.close();
+    if (this.recvChannel) {
+      this.recvChannel.close();
+    }
     this.cleanup();
     this.radio.disconnect(this.id);
     this.playing = false;

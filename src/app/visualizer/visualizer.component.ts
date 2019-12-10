@@ -12,7 +12,6 @@ import { StationService } from '../shared/services/station.service';
 export class VisualizerComponent implements OnInit {
   analyzerNode: AnalyserNode;
   context: AudioContext;
-  interval: any;
   myStation: StationService;
   vizFreqDomainData: Uint8Array;
   vizAnimationFrameId: number;
@@ -43,28 +42,25 @@ export class VisualizerComponent implements OnInit {
     this.analyzerNode.minDecibels = -100;
     this.analyzerNode.maxDecibels = -10;
     this.vizFreqDomainData = new Uint8Array(this.analyzerNode.frequencyBinCount);
+    this.vizAnimationFrameId = requestAnimationFrame(() => {
+      this.updateVizualizer();
+    });
     this.vizCtx = this.visualizerCanvas.nativeElement.getContext('2d');
     this.radio.incoming.connect(this.analyzerNode);
     this.myStation.outgoingGain.connect(this.analyzerNode);
-
-    clearInterval(this.interval);
-    this.interval = setInterval(() => {
-      this.updateVizualizer();
-    }, 1000);
   }
 
   updateVizualizer() {
-    console.log('updateVizualizer', this.analyzerNode, this.vizFreqDomainData);
-    if (this.analyzerNode && this.vizCtx) {
+    if (this.analyzerNode && this.vizCtx && this.visualizerCanvas) {
       this.analyzerNode.getByteFrequencyData(this.vizFreqDomainData);
-      const width = this.visualizerCanvas.width;
-      const height = this.visualizerCanvas.height;
+      const width = this.visualizerCanvas.nativeElement.clientWidth;
+      const height = this.visualizerCanvas.nativeElement.clientHeight;
       const barWidth = (width / (this.analyzerNode.frequencyBinCount / 9.3)); // Estimation for now
       this.vizCtx.clearRect(0, 0, width, height);
       this.vizCtx.fillStyle = 'black';
       this.vizCtx.fillRect(0, 0, width, height);
-      this.vizCtx.strokeStyle = 'yellow';
-      this.vizCtx.fillStyle = 'yellow';
+      this.vizCtx.strokeStyle = '#219E92';
+      this.vizCtx.fillStyle = '#219E92';
       this.vizCtx.beginPath();
       this.vizCtx.moveTo(0, height);
       let xval = 0;
@@ -94,6 +90,9 @@ export class VisualizerComponent implements OnInit {
           xval += barWidth + 1;
       }
       this.vizCtx.stroke();
+      requestAnimationFrame(() => {
+        this.updateVizualizer();
+      });
     }
   }
 }
