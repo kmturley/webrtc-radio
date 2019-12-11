@@ -4,10 +4,11 @@
   background-image: url('../../assets/images/header.jpg');;
   background-size: cover;
   display: flex;
-  height: 180px;
+  min-height: 180px;
   justify-content: center;
   flex-direction: column;
   font-size: 32px;
+  padding: $pad-h $pad-w;
   text-align: center;
 
   .logo {

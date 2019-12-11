@@ -18,6 +18,10 @@ const mimeTypes = {
 const listeners = {};
 const stations = {};
 
+const localIp = os.networkInterfaces()['en0']
+  .filter(interface => interface.family === 'IPv4')
+  .map(interface => interface.address)[0];
+
 function createServer(proto, handler) {
   if (proto === 'https') {
     return require('https').createServer({
@@ -62,7 +66,7 @@ function handleSockets(socket) {
     name: null,
     owns: null,
   };
-  socket.emit('connected', socket.id);
+  socket.emit('connected', socket.id, localIp);
   socket.emit('stations.updated', stations);
   io.emit('listeners.updated', listeners);
 

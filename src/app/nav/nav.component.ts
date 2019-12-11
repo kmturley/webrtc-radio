@@ -11,6 +11,8 @@ import { RadioService } from '../shared/services/radio.service';
 })
 export class NavComponent implements OnInit {
   currentUrl = '';
+  urlStart = '';
+  urlEnd = '';
   inputMessage = 'House';
 
   constructor(
@@ -23,6 +25,8 @@ export class NavComponent implements OnInit {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.currentUrl = event.urlAfterRedirects;
+        this.urlStart = window.location.protocol + '//';
+        this.urlEnd = ':' + window.location.port + window.location.pathname;
       }
     });
   }

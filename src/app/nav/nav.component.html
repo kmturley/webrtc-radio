@@ -1,5 +1,10 @@
 <div class="head">
-  <img src="../../assets/icons/logo.svg" alt="WebRTC Radio" class="logo" />
+  <!-- <img src="../../assets/icons/logo.svg" alt="WebRTC Radio" class="logo" /> -->
+  <ngx-qrcode 
+    qrc-element-type="url" 
+    [qrc-value]="urlStart + radio.host + urlEnd"
+    qrc-errorCorrectionLevel="L">
+  </ngx-qrcode>
   <span class="title">WebRTC <strong>Radio</strong></span>
   <a routerLink="/listeners/{{ radio.socket.id }}" class="user">
     <img src="../../assets/icons/profile.svg" alt="My profile" class="profile" />

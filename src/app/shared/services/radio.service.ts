@@ -13,7 +13,7 @@ export class RadioService {
   outgoing: MediaStreamAudioDestinationNode;
   incoming: GainNode;
   socket: any;
-  ip = window.location.hostname;
+  host = window.location.hostname;
   offerOptions = {
     offerToReceiveAudio: 1,
     offerToReceiveVideo: 0
@@ -31,7 +31,12 @@ export class RadioService {
     this.outgoing = this.context.createMediaStreamDestination();
     this.incoming = this.context.createGain();
     this.incoming.connect(this.context.destination);
-    this.socket = io.connect(`//${this.ip}:${this.port}`);
+    this.socket = io.connect(`//${this.host}:${this.port}`);
+
+    this.socket.on('connected', (socketId: string, localIp: string) => {
+      console.log('Radio.connected', socketId, localIp);
+      this.host = localIp;
+    });
 
     this.socket.on('listeners.updated', (listeners: object) => {
       console.log('Radio.listeners.updated', listeners);
