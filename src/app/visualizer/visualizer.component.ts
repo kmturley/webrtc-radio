@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, HostListener, Input, OnDestroy, ViewChild } from '@angular/core';
 
 import { ListenerService } from '../shared/services/listener.service';
 import { RadioService } from '../shared/services/radio.service';
@@ -9,8 +9,10 @@ import { StationService } from '../shared/services/station.service';
   templateUrl: './visualizer.component.html',
   styleUrls: ['./visualizer.component.scss']
 })
-export class VisualizerComponent implements AfterViewInit {
+export class VisualizerComponent implements AfterViewInit, OnDestroy {
   analyzerNode: AnalyserNode;
+  canvasHeight: 0;
+  canvasWidth: 0;
   context: AudioContext;
   myStation: StationService;
   vizFreqDomainData: Uint8Array;
@@ -20,6 +22,7 @@ export class VisualizerComponent implements AfterViewInit {
 
   @Input() set station(station: StationService) {
     if (station) {
+      this.createAnalyzer();
       this.myStation = station;
       this.myStation.outgoingGain.connect(this.analyzerNode);
       console.log('station', station);
@@ -28,37 +31,48 @@ export class VisualizerComponent implements AfterViewInit {
 
   @ViewChild('visualizerCanvas', {static: false}) visualizerCanvas: any;
 
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    const canvas = this.visualizerCanvas.nativeElement;
+    this.canvasHeight = canvas.height = canvas.parentNode.clientHeight;
+    this.canvasWidth = canvas.width = canvas.parentNode.clientWidth;
+    console.log('resize', this.canvasWidth, this.canvasHeight);
+  }
+
   constructor(
     public radio: RadioService
   ) { }
 
   ngAfterViewInit() {
-    this.analyzerNode = this.radio.context.createAnalyser();
-    this.analyzerNode.smoothingTimeConstant = 0.6;
-    this.analyzerNode.fftSize = 2048;
-    this.analyzerNode.minDecibels = -100;
-    this.analyzerNode.maxDecibels = -10;
+    this.createAnalyzer();
     this.vizFreqDomainData = new Uint8Array(this.analyzerNode.frequencyBinCount);
     this.vizAnimationFrameId = requestAnimationFrame(() => {
       this.updateVizualizer();
     });
     this.vizCtx = this.visualizerCanvas.nativeElement.getContext('2d');
     this.radio.incoming.connect(this.analyzerNode);
+    this.onResize();
+  }
+
+  createAnalyzer() {
+    this.analyzerNode = this.radio.context.createAnalyser();
+    this.analyzerNode.smoothingTimeConstant = 0.6;
+    this.analyzerNode.fftSize = 2048;
+    this.analyzerNode.minDecibels = -100;
+    this.analyzerNode.maxDecibels = -10;
   }
 
   updateVizualizer() {
-    if (this.analyzerNode && this.vizCtx && this.visualizerCanvas) {
+    if (this.analyzerNode && this.vizCtx) {
       this.analyzerNode.getByteFrequencyData(this.vizFreqDomainData);
-      const width = this.visualizerCanvas.nativeElement.clientWidth;
-      const height = this.visualizerCanvas.nativeElement.clientHeight;
-      const barWidth = (width / (this.analyzerNode.frequencyBinCount / 9.3));
-      this.vizCtx.clearRect(0, 0, width, height);
+      const barWidth = (this.canvasWidth / (this.analyzerNode.frequencyBinCount / 9.3));
+      this.vizCtx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
       this.vizCtx.fillStyle = 'black';
-      this.vizCtx.fillRect(0, 0, width, height);
+      this.vizCtx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
       this.vizCtx.strokeStyle = '#219E92';
       this.vizCtx.fillStyle = '#219E92';
       this.vizCtx.beginPath();
-      this.vizCtx.moveTo(0, height);
+      this.vizCtx.moveTo(0, this.canvasHeight);
       let xval = 0;
       const t = 1;
       let next = 1;
@@ -66,15 +80,15 @@ export class VisualizerComponent implements AfterViewInit {
           next += i / (this.analyzerNode.frequencyBinCount / 16);
           next = next - (next % 1);
           if (this.vizualizerOpt === 'bar') {
-            this.vizCtx.fillRect(xval, height - this.vizFreqDomainData[i], barWidth, this.vizFreqDomainData[i]);
+            this.vizCtx.fillRect(xval, this.canvasHeight - this.vizFreqDomainData[i], barWidth, this.vizFreqDomainData[i]);
           } else {
-            const p0 = (i > 0) ? { x: xval - barWidth, y: height - this.vizFreqDomainData[i - 1] } : { x: 0, y: 0 };
-            const p1 = { x: xval, y: height - this.vizFreqDomainData[i] };
+            const p0 = (i > 0) ? { x: xval - barWidth, y: this.canvasHeight - this.vizFreqDomainData[i - 1] } : { x: 0, y: 0 };
+            const p1 = { x: xval, y: this.canvasHeight - this.vizFreqDomainData[i] };
             const p2 = (i < this.analyzerNode.frequencyBinCount - 1) ? {
-              x: xval + barWidth, y: height - this.vizFreqDomainData[i + 1]
+              x: xval + barWidth, y: this.canvasHeight - this.vizFreqDomainData[i + 1]
             } : p1;
             const p3 = (i < this.analyzerNode.frequencyBinCount - 2) ? {
-              x: xval + 2 * barWidth, y: height - this.vizFreqDomainData[i + 2]
+              x: xval + 2 * barWidth, y: this.canvasHeight - this.vizFreqDomainData[i + 2]
             } : p1;
             const cp1x = p1.x + (p2.x - p0.x) / 6 * t;
             const cp1y = p1.y + (p2.y - p0.y) / 6 * t;
@@ -88,6 +102,15 @@ export class VisualizerComponent implements AfterViewInit {
       requestAnimationFrame(() => {
         this.updateVizualizer();
       });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.myStation) {
+      this.myStation.outgoingGain.disconnect();
+    }
+    if (this.radio) {
+      this.radio.incoming.disconnect();
     }
   }
 }

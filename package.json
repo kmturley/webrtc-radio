@@ -24,6 +24,7 @@
     "@angular/router": "~8.2.14",
     "angular-pipes": "^10.0.0",
     "https": "^1.0.0",
+    "ngx-qrcode2": "0.0.9",
     "rxjs": "~6.4.0",
     "sdp-transform": "^2.13.0",
     "socket.io": "^2.3.0",

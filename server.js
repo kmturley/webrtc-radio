@@ -7,16 +7,21 @@ const port = 8080;
 const protocol = 'https';
 const root = '/dist';
 const mimeTypes = {
+  'css': 'text/css',
   'html': 'text/html',
   'jpeg': 'image/jpeg',
   'jpg': 'image/jpeg',
-  'png': 'image/png',
   'js': 'text/javascript',
-  'css': 'text/css'
+  'png': 'image/png',
+  'svg': 'image/svg+xml',
 };
 
 const listeners = {};
 const stations = {};
+
+const localIp = os.networkInterfaces()['en0']
+  .filter(interface => interface.family === 'IPv4')
+  .map(interface => interface.address)[0];
 
 function createServer(proto, handler) {
   if (proto === 'https') {
@@ -33,14 +38,22 @@ function handleRequest(req, res) {
   if (req.url === '/') {
     req.url = '/index.html';
   }
-  console.log(`server: ${__dirname + root + req.url}`);
-  fs.readFile(__dirname + root + req.url, function (err, data) {
+  loadFile(__dirname + root + req.url, req, res);
+}
+
+function loadFile(path, req, res) {
+  console.log(`server: ${path}`);
+  fs.readFile(path, (err, data) => {
+    const mimeType = mimeTypes[path.split('.').pop()];
     if (err) {
-      res.writeHead(404);
-      res.end(JSON.stringify(err));
+      if (mimeType) {
+        res.writeHead(404);
+        res.end(JSON.stringify(err));
+      } else {
+        loadFile(__dirname + root + '/index.html', req, res);
+      }
       return;
     }
-    const mimeType = mimeTypes[req.url.split('.').pop()];
     res.writeHead(200, {'Content-Type': mimeType || 'text/plain'});
     res.end(data);
   });
@@ -62,7 +75,7 @@ function handleSockets(socket) {
     name: null,
     owns: null,
   };
-  socket.emit('connected', socket.id);
+  socket.emit('connected', socket.id, localIp);
   socket.emit('stations.updated', stations);
   io.emit('listeners.updated', listeners);
 

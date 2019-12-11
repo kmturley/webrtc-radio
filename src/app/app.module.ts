@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { NgSlugifyPipeModule, SlugifyPipe } from 'angular-pipes';
 import adapter from 'webrtc-adapter';
+import { NgxQRCodeModule } from 'ngx-qrcode2';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -27,6 +28,7 @@ import { VisualizerComponent } from './visualizer/visualizer.component';
     BrowserModule,
     FormsModule,
     NgSlugifyPipeModule,
+    NgxQRCodeModule,
     AppRoutingModule
   ],
   providers: [SlugifyPipe],

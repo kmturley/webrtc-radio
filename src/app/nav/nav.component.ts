@@ -11,7 +11,9 @@ import { RadioService } from '../shared/services/radio.service';
 })
 export class NavComponent implements OnInit {
   currentUrl = '';
-  inputMessage = 'House';
+  urlStart = '';
+  urlEnd = '';
+  inputMessage = '';
 
   constructor(
     public radio: RadioService,
@@ -23,6 +25,8 @@ export class NavComponent implements OnInit {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         this.currentUrl = event.urlAfterRedirects;
+        this.urlStart = window.location.protocol + '//';
+        this.urlEnd = ':' + window.location.port + window.location.pathname;
       }
     });
   }
@@ -32,9 +36,10 @@ export class NavComponent implements OnInit {
   }
 
   async create(input: string) {
-    const stationId = this.slugifyPipe.transform(input);
-    this.radio.add(stationId, input);
-    this.router.navigate([`/stations/${stationId}`], { queryParams: {create: true} });
+    if (input) {
+      const stationId = this.slugifyPipe.transform(input);
+      this.radio.add(stationId, input);
+      this.router.navigate([`/stations/${stationId}`], { queryParams: {create: true} });
+    }
   }
-
 }
