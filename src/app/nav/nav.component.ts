@@ -13,7 +13,7 @@ export class NavComponent implements OnInit {
   currentUrl = '';
   urlStart = '';
   urlEnd = '';
-  inputMessage = 'House';
+  inputMessage = '';
 
   constructor(
     public radio: RadioService,
@@ -36,9 +36,10 @@ export class NavComponent implements OnInit {
   }
 
   async create(input: string) {
-    const stationId = this.slugifyPipe.transform(input);
-    this.radio.add(stationId, input);
-    this.router.navigate([`/stations/${stationId}`], { queryParams: {create: true} });
+    if (input) {
+      const stationId = this.slugifyPipe.transform(input);
+      this.radio.add(stationId, input);
+      this.router.navigate([`/stations/${stationId}`], { queryParams: {create: true} });
+    }
   }
-
 }

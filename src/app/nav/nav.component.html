@@ -3,7 +3,7 @@
   <ngx-qrcode 
     qrc-element-type="url" 
     [qrc-value]="urlStart + radio.host + urlEnd"
-    qrc-errorCorrectionLevel="L">
+    qrc-errorCorrectionLevel="M">
   </ngx-qrcode>
   <span class="title">WebRTC <strong>Radio</strong></span>
   <a routerLink="/listeners/{{ radio.socket.id }}" class="user">
@@ -16,7 +16,7 @@
     <li><a routerLink="/listeners" [ngClass]="{'active': isActive('/listeners')}">Listeners</a></li>
   </ul>
   <div class="menu-create">
-    <input type="text" [(ngModel)]="inputMessage" />
+    <input type="text" [(ngModel)]="inputMessage" placeholder="Station name" />
     <button class="create" (click)="create(inputMessage)">Create</button>
   </div>
 </div>
