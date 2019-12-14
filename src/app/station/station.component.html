@@ -1,6 +1,11 @@
 <div class="station-parent" *ngIf="radio.stations[stationId]">
   <div class="station" *ngIf="!create && !edit">
     <div class="section details">
+      <ngx-qrcode 
+        qrc-element-type="url" 
+        [qrc-value]="urlStart + radio.host + urlEnd"
+        qrc-errorCorrectionLevel="M">
+      </ngx-qrcode>
       <p *ngIf="isOwner()">Broadcasting to</p>
       <p *ngIf="!isOwner()">Listening to</p>
       <h2>{{ radio.stations[stationId].name || radio.stations[stationId].id }}</h2>

@@ -11,6 +11,16 @@
   justify-content: space-between;
   height: 100%;
 
+  .details,
+  app-visualizer,
+  .controls {
+    flex: 1 2 auto;
+  }
+
+  app-visualizer {
+    flex: 1 1 auto;
+  }
+
   .details {
     box-sizing: border-box;
     text-align: center;
