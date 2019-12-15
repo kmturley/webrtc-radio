@@ -1,7 +1,7 @@
 ![alt text](https://raw.githubusercontent.com/kmturley/webrtc-audio-broadcast/master/src/assets/images/webrtc-radio.jpg "WebRTC Radio")
-# webrtc-audio-broadcast
+# webrtc-radio
 
-WebRTC audio broadcast running across local network using:
+Radio web app which broadcasts audio across your local network using:
 
 * WebRTC
 * Angular 8.2.x
