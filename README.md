@@ -1,4 +1,4 @@
-![alt text](https://raw.githubusercontent.com/kmturley/webrtc-audio-broadcast/master/src/assets/images/webrtc-radio.png "WebRTC Radio")
+![alt text](https://raw.githubusercontent.com/kmturley/webrtc-audio-broadcast/master/src/assets/images/webrtc-radio.jpg "WebRTC Radio")
 # webrtc-audio-broadcast
 
 WebRTC audio broadcast running across local network using:
