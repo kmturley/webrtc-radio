@@ -7,7 +7,7 @@ import { NavigationEnd, Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  currentUrl = '';
+  urlCurrent = '';
 
   constructor(
     private router: Router,
@@ -17,7 +17,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.currentUrl = event.urlAfterRedirects;
+        this.urlCurrent = event.urlAfterRedirects;
       }
     });
   }

@@ -10,7 +10,7 @@ import { RadioService } from '../shared/services/radio.service';
   styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit {
-  currentUrl = '';
+  urlCurrent = '';
   urlStart = '';
   urlEnd = '';
   inputMessage = '';
@@ -24,7 +24,7 @@ export class NavComponent implements OnInit {
   ngOnInit() {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.currentUrl = event.urlAfterRedirects;
+        this.urlCurrent = event.urlAfterRedirects;
         this.urlStart = window.location.protocol + '//';
         this.urlEnd = ':' + window.location.port + window.location.pathname;
       }
@@ -32,10 +32,11 @@ export class NavComponent implements OnInit {
   }
 
   isActive(url: string) {
-    return this.currentUrl.startsWith(url);
+    return this.urlCurrent.startsWith(url);
   }
 
-  async create(input: string) {
+  async create(event: Event, input: string) {
+    event.preventDefault();
     if (input) {
       const stationId = this.slugifyPipe.transform(input);
       this.radio.add(stationId, input);

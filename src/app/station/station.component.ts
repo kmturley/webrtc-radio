@@ -1,6 +1,5 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 import { ListenerService } from '../shared/services/listener.service';
 import { RadioService } from '../shared/services/radio.service';
@@ -21,6 +20,9 @@ export class StationComponent implements OnDestroy, OnInit {
   stationId: string;
   timeEnd = '';
   timeStart = '';
+  urlCurrent = '';
+  urlStart = '';
+  urlEnd = '';
 
   constructor(
     public radio: RadioService,
@@ -33,6 +35,13 @@ export class StationComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.urlCurrent = event.urlAfterRedirects;
+        this.urlStart = window.location.protocol + '//';
+        this.urlEnd = ':' + window.location.port + window.location.pathname;
+      }
+    });
     this.route.queryParams.subscribe((queryParams) => {
       this.create = queryParams.create === 'true' ? true : false;
       this.edit = queryParams.edit === 'true' ? true : false;
