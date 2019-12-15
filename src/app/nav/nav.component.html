@@ -1,10 +1,10 @@
 <div class="head">
-  <!-- <img src="/assets/icons/logo.svg" alt="WebRTC Radio" class="logo" /> -->
-  <ngx-qrcode 
+  <img src="/assets/icons/logo.svg" alt="WebRTC Radio" class="logo" />
+  <!-- <ngx-qrcode 
     qrc-element-type="url" 
     [qrc-value]="urlStart + radio.host + urlEnd"
     qrc-errorCorrectionLevel="M">
-  </ngx-qrcode>
+  </ngx-qrcode> -->
   <span class="title">WebRTC <strong>Radio</strong></span>
   <a routerLink="/listeners/{{ radio.socket.id }}" class="user">
     <img src="/assets/icons/profile.svg" alt="My profile" class="profile" />
@@ -15,8 +15,8 @@
     <li><a routerLink="/stations" [ngClass]="{'active': isActive('/stations')}">Stations</a></li>
     <li><a routerLink="/listeners" [ngClass]="{'active': isActive('/listeners')}">Listeners</a></li>
   </ul>
-  <div class="menu-create">
-    <input type="text" [(ngModel)]="inputMessage" placeholder="Station name" />
-    <button class="create" (click)="create(inputMessage)">Create</button>
-  </div>
+  <form class="menu-create" (submit)="create($event, inputMessage)">
+    <input type="text" name="inputMessage" [(ngModel)]="inputMessage" placeholder="Station name" />
+    <input type="submit" class="create" value="Create" />
+  </form>
 </div>

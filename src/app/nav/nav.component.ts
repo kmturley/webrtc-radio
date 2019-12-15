@@ -35,7 +35,8 @@ export class NavComponent implements OnInit {
     return this.urlCurrent.startsWith(url);
   }
 
-  async create(input: string) {
+  async create(event: Event, input: string) {
+    event.preventDefault();
     if (input) {
       const stationId = this.slugifyPipe.transform(input);
       this.radio.add(stationId, input);
