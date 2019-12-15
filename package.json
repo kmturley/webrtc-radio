@@ -8,6 +8,7 @@
     "e2e": "ng e2e",
     "generate": "mkdir ./keys && openssl genrsa -out ./keys/client-key.pem 2048 && openssl req -new -key ./keys/client-key.pem -out ./keys/client.csr && openssl x509 -req -in ./keys/client.csr -signkey ./keys/client-key.pem -out ./keys/client-cert.pem",
     "ng": "ng",
+    "parser": "node parser.js",
     "start": "npm run build && node ./server.js",
     "test": "ng test",
     "lint": "ng lint"
