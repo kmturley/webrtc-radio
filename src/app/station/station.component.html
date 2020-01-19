@@ -69,6 +69,12 @@
           <label for="image">Image:</label>
           <input id="image" name="image" type="file" />
         </div> -->
+        <!-- <div class="input">
+          <label for="audioQuality">Audio quality:</label>
+          <select id="audioQuality" name="audioQuality" (change)="onQualityChange($event.target.value)">
+            <option *ngFor="let quality of qualityLevels" [value]="quality" [selected]="quality == qualityLevel">{{ quality }}kbit/s</option>
+          </select>
+        </div> -->
         <div class="input">
           <label for="audioInput">Audio input:</label>
           <select id="audioInput" name="audioInput" (change)="onChange($event.target.value)">

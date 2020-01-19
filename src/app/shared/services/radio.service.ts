@@ -9,10 +9,12 @@ declare var window: any;
   providedIn: 'root'
 })
 export class RadioService {
+  bitrate = 512 * 1000;
   context: AudioContext;
   outgoing: MediaStreamAudioDestinationNode;
   incoming: GainNode;
   socket: any;
+  stereo = 1;
   host = window.location.hostname;
   offerOptions = {
     offerToReceiveAudio: 1,
@@ -78,6 +80,7 @@ export class RadioService {
       this.listenerServices[listener.id] = listener;
       listener.offered = true;
       const offer = await listener.conn.createOffer(this.offerOptions);
+      // offer.sdp = this.updateBandwidth(offer.sdp);
       await listener.conn.setLocalDescription(offer);
       this.socket.emit('offer', offer, listener.id);
     });
@@ -103,7 +106,7 @@ export class RadioService {
       listener.answered = true;
       await listener.conn.setRemoteDescription(offer);
       const answer = await listener.conn.createAnswer(this.offerOptions);
-      answer.sdp = answer.sdp.replace('useinbandfec=1', 'useinbandfec=1; stereo=1; maxaveragebitrate=510000');
+      // answer.sdp = this.updateBandwidth(answer.sdp);
       await listener.conn.setLocalDescription(answer);
       this.socket.emit('answer', answer, socketId);
       listener.uncacheICECandidates();
@@ -145,6 +148,11 @@ export class RadioService {
       listener.conn.addTrack(audioTracks[0], localStream);
     }
     return listener;
+  }
+
+  updateBandwidth(sdp: string) {
+    const newsdp = `stereo=${this.stereo}; maxaveragebitrate=${this.bitrate}; maxplaybackrate=${this.bitrate}`;
+    return sdp.replace('useinbandfec=1', 'useinbandfec=1; ' + newsdp);
   }
 
   newListener(id: string, radio: any, audioContext: AudioContext, incomingMedia: GainNode): any {

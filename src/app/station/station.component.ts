@@ -17,6 +17,8 @@ export class StationComponent implements OnDestroy, OnInit {
   devicesIn = [];
   interval: any;
   myStation: StationService;
+  qualityLevel = 512;
+  qualityLevels = [32, 64, 96, 128, 192, 256, 320, 512];
   stationId: string;
   timeEnd = '';
   timeStart = '';
@@ -71,6 +73,12 @@ export class StationComponent implements OnDestroy, OnInit {
         }
       });
     });
+  }
+
+  onQualityChange(qualityLevel: number) {
+    console.log('onQualityChange', qualityLevel);
+    this.qualityLevel = qualityLevel;
+    this.radio.bitrate = qualityLevel * 1000;
   }
 
   onChange(deviceId: string) {

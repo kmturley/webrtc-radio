@@ -13,7 +13,7 @@ Radio web app which broadcasts audio across your local network using:
 
 Install dependencies using:
 
-     npm install
+    npm install
 
 Generate an SSL key and certificate using:
 
