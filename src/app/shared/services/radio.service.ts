@@ -3,8 +3,6 @@ import io from 'socket.io-client';
 
 import { StationModel } from '../models/models';
 
-declare var window: any;
-
 @Injectable({
   providedIn: 'root'
 })
@@ -28,7 +26,6 @@ export class RadioService {
 
   constructor() {
     console.log('Radio.init');
-    window.AudioContext = (window.AudioContext || window.webkitAudioContext);
     this.context = new AudioContext();
     this.outgoing = this.context.createMediaStreamDestination();
     this.incoming = this.context.createGain();
