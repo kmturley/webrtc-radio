@@ -8,6 +8,8 @@ Radio web app which broadcasts audio across your local network using:
 * NodeJS 10.16.x
 * socket.io 2.3.x
 
+Note: This project supports multiple broadcasts with peer-to-peer communication, which is complex. If you only need a single audio broadcast server, check out https://github.com/meetecho/janus-gateway in particular this example https://janus.conf.meetecho.com/streamingtest.html
+
 
 ## Installation
 
